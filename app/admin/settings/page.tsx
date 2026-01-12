@@ -66,6 +66,7 @@ export default function AdminUsersPage() {
 
   function onSubmit(values: z.infer<typeof adminSchema>) {
     const newAdmin = {
+      // eslint-disable-next-line react-hooks/purity
       id: Math.random(),
       fullName: values.fullName,
       email: values.email,

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
@@ -42,7 +42,7 @@ export default function OrderDetailsPage() {
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium">Status:</span>
           <Select value={status} onValueChange={handleStatusChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-45">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>

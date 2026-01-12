@@ -17,12 +17,12 @@ import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
 const sidebarItems = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Products", href: "/products", icon: ShoppingBag },
-  { name: "Categories", href: "/categories", icon: Layers },
-  { name: "Orders", href: "/orders", icon: ShoppingCart },
-  { name: "Customers", href: "/customers", icon: Users },
-  { name: "Settings", href: "/settings/admins", icon: Settings },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Products", href: "/admin/products", icon: ShoppingBag },
+  { name: "Categories", href: "/admin/categories", icon: Layers },
+  { name: "Orders", href: "/admin/orders", icon: ShoppingCart },
+  { name: "Customers", href: "/admin/customers", icon: Users },
+  { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export function Sidebar() {
