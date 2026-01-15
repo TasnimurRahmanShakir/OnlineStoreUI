@@ -21,5 +21,17 @@ export type CategoryFormValues = z.infer<typeof categorySchema>;
 
 export type ApiResponse<T> = {
   message: string;
-  result: T;
+  items: T;
+};
+
+// Matches C# response:
+// { items, totalPages, currentPage, pageSize, hasPreviousPage, hasNextPage, totalItems }
+export type PaginatedResult<T> = {
+  items: T[];
+  totalItems: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 };

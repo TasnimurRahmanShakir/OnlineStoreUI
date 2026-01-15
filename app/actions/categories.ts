@@ -1,11 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { CategoryFormValues, Category, ApiResponse } from "@/lib/types";
+import {
+  CategoryFormValues,
+  Category,
+  ApiResponse,
+  PaginatedResult,
+} from "@/lib/types";
 import { api } from "@/lib/api-client";
 
-export async function getCategoriesAction() {
-  return await api.get<ApiResponse<Category[]>>("/Category");
+// Backend returns the PaginatedResult directly
+export async function getCategoriesAction(
+  page: number = 1,
+  limit: number = 10
+) {
+  return await api.get<PaginatedResult<Category>>("/Category", {
+    params: { page, limit },
+  });
 }
 
 export async function createCategoryAction(values: CategoryFormValues) {
@@ -21,22 +32,23 @@ export async function createCategoryAction(values: CategoryFormValues) {
 
 export async function updateCategoryAction(
   id: string,
-  values: CategoryFormValues
+  values: CategoryFormValues,
+  path: string = "/admin/categories"
 ) {
   const result = await api.put<ApiResponse<Category>>(
-    `/categories/${id}`,
+    `/Category/update/${id}`,
     values
   );
 
   if (result.success) {
-    revalidatePath("/admin/categories");
+    revalidatePath(path);
   }
 
   return result;
 }
 
 export async function deleteCategoryAction(id: string) {
-  const result = await api.del<boolean>(`/categories/${id}`);
+  const result = await api.del<boolean>(`/Category/delete/${id}`);
 
   if (result.success) {
     revalidatePath("/admin/categories");

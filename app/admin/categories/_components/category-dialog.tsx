@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
@@ -31,10 +31,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { categorySchema, CategoryFormValues, Category } from "@/lib/types";
-import { createCategoryAction } from "@/app/actions/categories"; // Import Action
+import {
+  createCategoryAction,
+  updateCategoryAction,
+} from "@/app/actions/categories";
+import { usePathname, useSearchParams } from "next/navigation";
 
-export function CategoryDialog({ categories }: { categories: Category[] }) {
-  const [isOpen, setIsOpen] = useState(false);
+interface CategoryDialogProps {
+  categories: Category[];
+  initialData?: Category;
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function CategoryDialog({
+  initialData,
+  categories,
+  isOpen: controlledIsOpen,
+  onOpenChange: controlledOnOpenChange,
+}: CategoryDialogProps) {
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isOpen = controlledIsOpen ?? internalIsOpen;
+  const onOpenChange = controlledOnOpenChange ?? setInternalIsOpen;
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -46,39 +67,72 @@ export function CategoryDialog({ categories }: { categories: Category[] }) {
     },
   });
 
+  useEffect(() => {
+    if (initialData) {
+      form.reset({
+        name: initialData.name,
+        slug: initialData.slug,
+        imageUrl: initialData.imageUrl || "",
+        parentId: initialData.parentId || "none",
+      });
+    } else {
+      form.reset({
+        name: "",
+        slug: "",
+        imageUrl: "",
+        parentId: "none",
+      });
+    }
+  }, [initialData, form, isOpen]);
+
   async function onSubmit(values: CategoryFormValues) {
-    // Sanitize payload
     const payload = {
       ...values,
       parentId: values.parentId === "none" ? undefined : values.parentId,
     };
 
-    // Call Server Action
-    const result = await createCategoryAction(payload);
+    const currentPath = `${pathname}?${searchParams.toString()}`;
 
-    if (result.success) { 
-      toast.success("Category created successfully!");
-      setIsOpen(false);
-      form.reset();
+    let result;
+    if (initialData) {
+      result = await updateCategoryAction(initialData.id, payload, currentPath);
+    } else {
+      result = await createCategoryAction(payload);
+    }
+
+    if (result.success) {
+      toast.success(
+        `Category ${initialData ? "updated" : "created"} successfully!`
+      );
+      onOpenChange(false);
+      if (!initialData) form.reset();
     } else {
       form.setError("root", {
-        message: result.error || "Failed to create category",
+        message:
+          result.error ||
+          `Failed to ${initialData ? "update" : "create"} category`,
       });
     }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" /> Add Category
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      {!initialData && (
+        <DialogTrigger asChild>
+          <Button>
+            <Plus className="mr-2 h-4 w-4" /> Add Category
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add New Category</DialogTitle>
+          <DialogTitle>
+            {initialData ? "Edit Category" : "Add New Category"}
+          </DialogTitle>
           <DialogDescription>
-            Add a new category to your store.
+            {initialData
+              ? "Update category details."
+              : "Add a new category to your store."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -140,6 +194,7 @@ export function CategoryDialog({ categories }: { categories: Category[] }) {
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
+                    value={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -148,11 +203,13 @@ export function CategoryDialog({ categories }: { categories: Category[] }) {
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="none">None (Top Level)</SelectItem>
-                      {categories?.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.name}
-                        </SelectItem>
-                      ))}
+                      {categories
+                        ?.filter((cat) => cat.id !== initialData?.id) // Prevent selecting self as parent
+                        .map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -169,7 +226,11 @@ export function CategoryDialog({ categories }: { categories: Category[] }) {
               className="w-full"
               disabled={form.formState.isSubmitting}
             >
-              {form.formState.isSubmitting ? "Saving..." : "Save Category"}
+              {form.formState.isSubmitting
+                ? "Saving..."
+                : initialData
+                ? "Update Category"
+                : "Save Category"}
             </Button>
           </form>
         </Form>

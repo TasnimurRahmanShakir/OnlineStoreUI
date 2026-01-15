@@ -1,0 +1,118 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { Edit, MoreHorizontal, Trash } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Category } from "@/lib/types";
+import { deleteCategoryAction } from "@/app/actions/categories";
+import { CategoryDialog } from "./category-dialog";
+
+interface CategoryActionsProps {
+  category: Category;
+  otherCategories: Category[];
+}
+
+export function CategoryActions({
+  category,
+  otherCategories,
+}: CategoryActionsProps) {
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  async function onDelete() {
+    try {
+      const result = await deleteCategoryAction(category.id);
+      if (result.success) {
+        toast.success("Category deleted");
+      } else {
+        toast.error(result.error || "Failed to delete category");
+      }
+    } catch (error) {
+      toast.error("Something went wrong");
+    } finally {
+      setShowDeleteDialog(false);
+    }
+  }
+
+  return (
+    <>
+      <CategoryDialog
+        initialData={category}
+        categories={otherCategories}
+        isOpen={showEditDialog}
+        onOpenChange={setShowEditDialog}
+      />
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              category "{category.name}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={(e) => {
+                e.preventDefault();
+                onDelete();
+              }}
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <span className="sr-only">Open menu</span>
+            <MoreHorizontal className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => navigator.clipboard.writeText(category.id)}
+          >
+            Copy ID
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={() => setShowEditDialog(true)}>
+            <Edit className="mr-2 h-4 w-4" /> Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            onClick={() => setShowDeleteDialog(true)}
+          >
+            <Trash className="mr-2 h-4 w-4" /> Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+}
