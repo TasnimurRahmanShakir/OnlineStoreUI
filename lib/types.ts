@@ -10,6 +10,16 @@ export type Category = {
   createdAt?: string;
 };
 
+export type Product = {
+  id: string;
+  Product: string;
+  slug: string;
+  imageUrl?: string;
+  parentName?: string | null;
+  parentId?: string;
+  createdAt?: string;
+};
+
 export const categorySchema = z.object({
   name: z.string().min(1, "Name is required"),
   slug: z.string().min(1, "Slug is required"),
