@@ -9,6 +9,11 @@ import {
 } from "@/lib/types";
 import { api } from "@/lib/api-client";
 
+export interface CategoryOption {
+  id: string;
+  name: string;
+}
+
 // Backend returns the PaginatedResult directly
 export async function getCategoriesAction(
   page: number = 1,
@@ -55,4 +60,16 @@ export async function deleteCategoryAction(id: string) {
   }
 
   return result;
+}
+
+export async function getCategoriesForProductAction() {
+  const result = await api.get<{ items: CategoryOption[] }>(
+    "/Category/CategoryName"
+  );
+
+  console.log(JSON.stringify(result.data));
+  if (result.success && result.data) {
+    return result.data;
+  }
+  return { items: [] };
 }

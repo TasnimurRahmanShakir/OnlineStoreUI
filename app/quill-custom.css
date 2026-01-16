@@ -1,0 +1,40 @@
+/* Quill Custom Overrides for shadcn/ui feel */
+.ql-toolbar.ql-snow {
+  border-top-left-radius: 0.375rem; /* rounded-md */
+  border-top-right-radius: 0.375rem;
+  border-color: hsl(var(--input)) !important;
+  background-color: hsl(var(--background));
+}
+
+.ql-container.ql-snow {
+  border-bottom-left-radius: 0.375rem;
+  border-bottom-right-radius: 0.375rem;
+  border-color: hsl(var(--input)) !important;
+  background-color: hsl(var(--background));
+  font-family: inherit !important;
+  font-size: 0.875rem !important; /* text-sm */
+}
+
+.ql-editor {
+  min-height: 150px;
+}
+
+.ql-editor.ql-blank::before {
+  color: hsl(var(--muted-foreground)) !important;
+  font-style: normal !important;
+}
+
+/* Dark mode adjustments (rudimentary, relies on Tailwind dark mode class on parent) */
+.dark .ql-toolbar.ql-snow,
+.dark .ql-container.ql-snow {
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .ql-fill,
+.dark .ql-stroke.ql-fill {
+  fill: hsl(var(--foreground)) !important;
+}
+
+.dark .ql-stroke {
+  stroke: hsl(var(--foreground)) !important;
+}

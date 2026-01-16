@@ -1,0 +1,373 @@
+"use client";
+
+import { useForm, useFieldArray } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plus, Trash2 } from "lucide-react";
+import RichTextEditor from "@/components/ui/rich-text-editor";
+import "@/app/quill-custom.css";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CategoryOption } from "@/app/actions/categories";
+import { createProductAction } from "@/app/actions/product";
+import { useRouter } from "next/navigation";
+
+const variantSchema = z.object({
+  color: z.string().min(1, "Color is required"),
+  size: z.string().min(1, "Size is required"),
+  price: z.coerce.number().min(0, "Price must be positive"),
+  stockQuantity: z.coerce.number().int().min(0, "Stock must be positive"),
+  image: z.any().optional(),
+});
+
+const productSchema = z.object({
+  name: z.string().min(2, "Name is required"),
+  description: z.string().optional(),
+  brand: z.string().min(1, "Brand is required"),
+  categoryId: z.string().min(1, "Category is required"),
+  baseImage: z.any().optional(),
+  variants: z.array(variantSchema),
+});
+
+type ProductFormValues = z.infer<typeof productSchema>;
+
+interface ProductFormProps {
+  categories: CategoryOption[];
+}
+
+export default function ProductForm({ categories }: ProductFormProps) {
+  const form = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema) as any,
+    defaultValues: {
+      name: "",
+      description: "",
+      brand: "",
+      categoryId: "",
+      baseImage: undefined,
+      variants: [
+        {
+          color: "",
+          size: "",
+          price: 0,
+          stockQuantity: 0,
+          image: undefined,
+        },
+      ],
+    },
+    mode: "onChange",
+  });
+
+  const router = useRouter();
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "variants",
+  });
+
+  async function onSubmit(values: ProductFormValues) {
+    const formData = new FormData();
+
+    console.log(values);
+    formData.append("name", values.name);
+    formData.append("brand", values.brand);
+    formData.append("categoryId", values.categoryId);
+    formData.append("description", values.description || "");
+
+    if (values.baseImage?.[0]) {
+      formData.append("baseImage", values.baseImage[0]);
+    }
+
+    // Handle variants and their images
+    values.variants.forEach((variant, index) => {
+      formData.append(`variants[${index}][color]`, variant.color);
+      formData.append(`variants[${index}][size]`, variant.size);
+      formData.append(`variants[${index}][price]`, variant.price.toString());
+      formData.append(
+        `variants[${index}][stockQuantity]`,
+        variant.stockQuantity.toString()
+      );
+
+      if (variant.image?.[0]) {
+        formData.append(`variants[${index}][image]`, variant.image[0]);
+      }
+    });
+
+    try {
+      const result = await createProductAction(formData);
+
+      if (result.success) {
+        toast.success(
+          `Product ${result.data?.name || ""} created successfully!`
+        );
+        router.push("/admin/products");
+      } else {
+        toast.error(result.error || "Failed to create product");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An unexpected error occurred.");
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        {/* Basic Info */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Basic Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Product Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="e.g. Men's T-Shirt" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="brand"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Brand</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Nike" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="categoryId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <FormField
+              control={form.control}
+              name="baseImage"
+              render={({ field: { value, onChange, ...fieldProps } }) => (
+                <FormItem>
+                  <FormLabel>Base Image</FormLabel>
+                  <FormControl>
+                    <Input
+                      {...fieldProps}
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => {
+                        onChange(event.target.files && event.target.files);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <RichTextEditor
+                      value={field.value || ""}
+                      onChange={field.onChange}
+                      placeholder="Product description..."
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Variants */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Variants</CardTitle>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() =>
+                append({
+                  color: "",
+                  size: "",
+                  price: 0,
+                  stockQuantity: 0,
+                  image: undefined,
+                })
+              }
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              Add Variant
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {fields.map((field, index) => (
+              <div
+                key={field.id}
+                className="relative grid gap-4 p-4 border rounded-md md:grid-cols-3 bg-muted/20"
+              >
+                <div className="absolute right-2 top-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => remove(index)}
+                    className="text-destructive hover:text-destructive/90"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.color`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Color</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. Red" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.size`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Size</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. S, M, 42..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.price`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 25.00" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.stockQuantity`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Stock Quantity</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 50" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.image`}
+                  render={({ field: { value, onChange, ...fieldProps } }) => (
+                    <FormItem>
+                      <FormLabel>Variant Image</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...fieldProps}
+                          type="file"
+                          accept="image/*"
+                          onChange={(event) => {
+                            onChange(event.target.files && event.target.files);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            ))}
+
+            {fields.length === 0 && (
+              <div className="text-center p-4 text-muted-foreground">
+                No variants added. Click "Add Variant" to start.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <div className="flex justify-end">
+          <Button type="submit" size="lg">
+            Create Product
+          </Button>
+        </div>
+      </form>
+    </Form>
+  );
+}
