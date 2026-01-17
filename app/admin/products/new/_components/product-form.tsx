@@ -43,6 +43,7 @@ const productSchema = z.object({
   description: z.string().optional(),
   brand: z.string().min(1, "Brand is required"),
   categoryId: z.string().min(1, "Category is required"),
+  isActive: z.boolean().default(true),
   baseImage: z.any().optional(),
   variants: z.array(variantSchema),
 });
@@ -51,27 +52,42 @@ type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductFormProps {
   categories: CategoryOption[];
+  initialData?: any; // Replace 'any' with proper type if available
 }
 
-export default function ProductForm({ categories }: ProductFormProps) {
+export default function ProductForm({
+  categories,
+  initialData,
+}: ProductFormProps) {
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productSchema) as any,
-    defaultValues: {
-      name: "",
-      description: "",
-      brand: "",
-      categoryId: "",
-      baseImage: undefined,
-      variants: [
-        {
-          color: "",
-          size: "",
-          price: 0,
-          stockQuantity: 0,
-          image: undefined,
+    defaultValues: initialData
+      ? {
+          name: initialData.name,
+          description: initialData.description || "",
+          brand: initialData.brand,
+          categoryId: initialData.categoryId,
+          isActive: initialData.isActive,
+          baseImage: undefined, // Files can't be set programmatically easily
+          variants: initialData.variants || [],
+        }
+      : {
+          name: "",
+          description: "",
+          brand: "",
+          categoryId: "",
+          isActive: true, // Default to true for new products?
+          baseImage: undefined,
+          variants: [
+            {
+              color: "",
+              size: "",
+              price: 0,
+              stockQuantity: 0,
+              image: undefined,
+            },
+          ],
         },
-      ],
-    },
     mode: "onChange",
   });
 
@@ -85,11 +101,16 @@ export default function ProductForm({ categories }: ProductFormProps) {
   async function onSubmit(values: ProductFormValues) {
     const formData = new FormData();
 
+    if (initialData) {
+      formData.append("id", initialData.id);
+    }
+
     console.log(values);
     formData.append("name", values.name);
     formData.append("brand", values.brand);
     formData.append("categoryId", values.categoryId);
     formData.append("description", values.description || "");
+    formData.append("isActive", String(values.isActive));
 
     if (values.baseImage?.[0]) {
       formData.append("baseImage", values.baseImage[0]);
@@ -102,7 +123,7 @@ export default function ProductForm({ categories }: ProductFormProps) {
       formData.append(`variants[${index}][price]`, variant.price.toString());
       formData.append(
         `variants[${index}][stockQuantity]`,
-        variant.stockQuantity.toString()
+        variant.stockQuantity.toString(),
       );
 
       if (variant.image?.[0]) {
@@ -111,15 +132,14 @@ export default function ProductForm({ categories }: ProductFormProps) {
     });
 
     try {
+      // TODO: Handle Update Action if initialData is present
       const result = await createProductAction(formData);
 
       if (result.success) {
-        toast.success(
-          `Product ${result.data?.name || ""} created successfully!`
-        );
+        toast.success(`Product ${result.data?.name || ""} saved successfully!`);
         router.push("/admin/products");
       } else {
-        toast.error(result.error || "Failed to create product");
+        toast.error(result.error || "Failed to save product");
       }
     } catch (error) {
       console.error(error);
@@ -193,6 +213,32 @@ export default function ProductForm({ categories }: ProductFormProps) {
                 )}
               />
             </div>
+
+            <FormField
+              control={form.control}
+              name="isActive"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    onValueChange={(val) => field.onChange(val === "true")}
+                    defaultValue={field.value ? "true" : "false"}
+                    value={field.value ? "true" : "false"}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="true">Active</SelectItem>
+                      <SelectItem value="false">Inactive</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
@@ -336,7 +382,18 @@ export default function ProductForm({ categories }: ProductFormProps) {
                   name={`variants.${index}.image`}
                   render={({ field: { value, onChange, ...fieldProps } }) => (
                     <FormItem>
-                      <FormLabel>Variant Image</FormLabel>
+                      <FormLabel>
+                        Variant Image{" "}
+                        {initialData && (
+                          <span>
+                            (Current:{" "}
+                            {initialData.variants[index]?.imageUrl
+                              ? "Set"
+                              : "None"}
+                            )
+                          </span>
+                        )}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           {...fieldProps}
@@ -364,7 +421,7 @@ export default function ProductForm({ categories }: ProductFormProps) {
 
         <div className="flex justify-end">
           <Button type="submit" size="lg">
-            Create Product
+            {initialData ? "Update Product" : "Create Product"}
           </Button>
         </div>
       </form>

@@ -12,12 +12,11 @@ export type Category = {
 
 export type Product = {
   id: string;
-  Product: string;
-  slug: string;
-  imageUrl?: string;
-  parentName?: string | null;
-  parentId?: string;
-  createdAt?: string;
+  name: string;
+  brand: string;
+  baseImage: string;
+  priceSummary: string;
+  totalStock: number;
 };
 
 export const categorySchema = z.object({

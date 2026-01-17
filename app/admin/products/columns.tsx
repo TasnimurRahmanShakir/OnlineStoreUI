@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/lib/types";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
@@ -13,20 +15,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
+import { BASE_URL2 } from "@/lib/api-client";
 
 export const columns: ColumnDef<Product>[] = [
   {
-    accessorKey: "imageUrl",
+    accessorKey: "baseImage",
     header: "Image",
     cell: ({ row }) => {
-      const imageUrl = row.getValue("imageUrl") as string;
+      const baseImage = row.getValue("baseImage") as string;
       return (
         <div className="relative h-10 w-10 overflow-hidden rounded-md bg-gray-100">
-          {imageUrl ? (
+          {baseImage ? (
             <Image
-              src={imageUrl}
-              alt={row.getValue("Product")}
+              src={BASE_URL2 + baseImage}
+              alt={row.getValue("name")}
               fill
+              sizes="40px"
               className="object-cover"
             />
           ) : null}
@@ -35,16 +39,20 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
-    accessorKey: "Product",
+    accessorKey: "name",
     header: "Name",
   },
   {
-    accessorKey: "parentName",
-    header: "Category",
-    cell: ({ row }) => {
-      const parentName = row.getValue("parentName") as string;
-      return parentName || "N/A";
-    },
+    accessorKey: "brand",
+    header: "Brand",
+  },
+  {
+    accessorKey: "priceSummary",
+    header: "Price",
+  },
+  {
+    accessorKey: "totalStock",
+    header: "Stock",
   },
   {
     id: "actions",
@@ -67,7 +75,11 @@ export const columns: ColumnDef<Product>[] = [
               Copy product ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View details</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/products/${product.id}`} className="w-full">
+                <Pencil className="mr-2 h-4 w-4" /> Edit
+              </Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
