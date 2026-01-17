@@ -3,8 +3,6 @@ import { getCategoriesForProductAction } from "@/app/actions/categories";
 import ProductForm from "../new/_components/product-form";
 import { notFound } from "next/navigation";
 
-// Define the type for the full product detail response
-// Only defining what's needed for the form
 type ProductDetail = {
   id: string;
   name: string;
@@ -12,7 +10,7 @@ type ProductDetail = {
   brand: string;
   categoryId: string;
   isActive: boolean;
-  baseImage: string; // URL
+  baseImage: string;
   variants: Array<{
     color: string;
     size: string;

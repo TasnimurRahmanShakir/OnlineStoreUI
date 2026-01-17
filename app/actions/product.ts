@@ -15,6 +15,18 @@ export async function createProductAction(formData: FormData) {
   return result;
 }
 
+export async function updateProductAction(formData: FormData) {
+  console.log("updateProductAction", JSON.stringify(formData));
+  const id = formData.get("id");
+  const result = await api.put(`/Product/update/${id}`, formData);
+
+  if (result.success) {
+    revalidatePath("/admin/products");
+  }
+
+  return result;
+}
+
 export async function getProductAction(page: number = 1, limit: number = 10) {
   return await api.get<PaginatedResult<Product>>("/Product/all", {
     params: { page, limit },

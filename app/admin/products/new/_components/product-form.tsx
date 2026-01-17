@@ -27,13 +27,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { CategoryOption } from "@/app/actions/categories";
-import { createProductAction } from "@/app/actions/product";
+import {
+  createProductAction,
+  updateProductAction,
+} from "@/app/actions/product";
 import { useRouter } from "next/navigation";
 
 const variantSchema = z.object({
+  id: z.string().optional(),
   color: z.string().min(1, "Color is required"),
   size: z.string().min(1, "Size is required"),
   price: z.coerce.number().min(0, "Price must be positive"),
+  discount: z.string().optional(),
   stockQuantity: z.coerce.number().int().min(0, "Stock must be positive"),
   image: z.any().optional(),
 });
@@ -52,7 +57,7 @@ type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductFormProps {
   categories: CategoryOption[];
-  initialData?: any; // Replace 'any' with proper type if available
+  initialData?: any;
 }
 
 export default function ProductForm({
@@ -65,11 +70,16 @@ export default function ProductForm({
       ? {
           name: initialData.name,
           description: initialData.description || "",
-          brand: initialData.brand,
-          categoryId: initialData.categoryId,
-          isActive: initialData.isActive,
+          brand: initialData.brand || "",
+          categoryId: initialData.categoryId || "",
+          isActive: initialData.isActive ?? true,
           baseImage: undefined, // Files can't be set programmatically easily
-          variants: initialData.variants || [],
+          variants:
+            initialData.variants?.map((v: any) => ({
+              ...v,
+              discount: v.discount || "",
+              image: undefined,
+            })) || [],
         }
       : {
           name: "",
@@ -83,6 +93,7 @@ export default function ProductForm({
               color: "",
               size: "",
               price: 0,
+              discount: "",
               stockQuantity: 0,
               image: undefined,
             },
@@ -118,25 +129,36 @@ export default function ProductForm({
 
     // Handle variants and their images
     values.variants.forEach((variant, index) => {
-      formData.append(`variants[${index}][color]`, variant.color);
-      formData.append(`variants[${index}][size]`, variant.size);
-      formData.append(`variants[${index}][price]`, variant.price.toString());
+      formData.append(`variants[${index}].color`, variant.color);
+      formData.append(`variants[${index}].size`, variant.size);
+      formData.append(`variants[${index}].price`, variant.price.toString());
+      if (variant.discount) {
+        formData.append(`variants[${index}].discount`, variant.discount);
+      }
       formData.append(
-        `variants[${index}][stockQuantity]`,
+        `variants[${index}].stockQuantity`,
         variant.stockQuantity.toString(),
       );
 
+      if (variant.id) {
+        formData.append(`variants[${index}].id`, variant.id);
+      }
+
       if (variant.image?.[0]) {
-        formData.append(`variants[${index}][image]`, variant.image[0]);
+        formData.append(`variants[${index}].image`, variant.image[0]);
       }
     });
 
     try {
       // TODO: Handle Update Action if initialData is present
-      const result = await createProductAction(formData);
+      const result = initialData
+        ? await updateProductAction(formData)
+        : await createProductAction(formData);
 
       if (result.success) {
-        toast.success(`Product ${result.data?.name || ""} saved successfully!`);
+        toast.success(
+          `Product ${result.data?.name || ""} ${initialData ? "updated" : "saved"} successfully!`,
+        );
         router.push("/admin/products");
       } else {
         toast.error(result.error || "Failed to save product");
@@ -294,6 +316,7 @@ export default function ProductForm({
                   color: "",
                   size: "",
                   price: 0,
+                  discount: "",
                   stockQuantity: 0,
                   image: undefined,
                 })
@@ -329,6 +352,20 @@ export default function ProductForm({
                       <FormLabel>Color</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. Red" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name={`variants.${index}.discount`}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Discount</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g. 10 or 10%" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
