@@ -32,3 +32,17 @@ export async function getProductAction(page: number = 1, limit: number = 10) {
     params: { page, limit },
   });
 }
+
+export async function deleteProductAction(id: string) {
+  const result = await api.del(`/Product/delete/${id}`);
+
+  if (result.success) {
+    revalidatePath("/admin/products");
+  }
+
+  return result;
+}
+
+export async function deleteVariantAction(id: string) {
+  return await api.del(`/Variant/Delete/${id}`);
+}

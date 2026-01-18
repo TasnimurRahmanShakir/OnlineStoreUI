@@ -30,7 +30,21 @@ import { CategoryOption } from "@/app/actions/categories";
 import {
   createProductAction,
   updateProductAction,
+  deleteProductAction,
+  deleteVariantAction,
 } from "@/app/actions/product";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const variantSchema = z.object({
@@ -108,6 +122,63 @@ export default function ProductForm({
     control: form.control,
     name: "variants",
   });
+
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openVariantDeleteDialog, setOpenVariantDeleteDialog] = useState(false);
+  const [variantToDeleteIndex, setVariantToDeleteIndex] = useState<
+    number | null
+  >(null);
+
+  async function onDeleteProduct() {
+    try {
+      const result = await deleteProductAction(initialData.id);
+      if (result.success) {
+        toast.success("Product deleted successfully");
+        router.push("/admin/products");
+      } else {
+        toast.error(result.error || "Failed to delete product");
+      }
+    } catch (error) {
+      toast.error("Failed to delete product");
+    }
+  }
+
+  async function confirmDeleteVariant() {
+    if (variantToDeleteIndex === null) return;
+
+    const variantData = form.getValues(`variants.${variantToDeleteIndex}`);
+    const variantId = variantData?.id;
+
+    if (!variantId) return;
+
+    try {
+      const result = await deleteVariantAction(variantId);
+      if (result.success) {
+        toast.success("Variant deleted successfully");
+        remove(variantToDeleteIndex);
+      } else {
+        toast.error(result.error || "Failed to delete variant");
+      }
+    } catch (error) {
+      toast.error("Error deleting variant");
+    } finally {
+      setOpenVariantDeleteDialog(false);
+      setVariantToDeleteIndex(null);
+    }
+  }
+
+  function onRemoveVariant(index: number) {
+    const variantData = form.getValues(`variants.${index}`);
+    const variantId = variantData?.id;
+
+    if (initialData && variantId) {
+      setVariantToDeleteIndex(index);
+      setOpenVariantDeleteDialog(true);
+    } else {
+      // Just remove from the form array
+      remove(index);
+    }
+  }
 
   async function onSubmit(values: ProductFormValues) {
     const formData = new FormData();
@@ -337,7 +408,7 @@ export default function ProductForm({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => remove(index)}
+                    onClick={() => onRemoveVariant(index)}
                     className="text-destructive hover:text-destructive/90"
                   >
                     <Trash2 className="h-4 w-4" />
@@ -456,8 +527,66 @@ export default function ProductForm({
           </CardContent>
         </Card>
 
-        <div className="flex justify-end">
-          <Button type="submit" size="lg">
+        <div className="flex justify-between items-center">
+          <AlertDialog
+            open={openVariantDeleteDialog}
+            onOpenChange={setOpenVariantDeleteDialog}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete
+                  this variant.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={confirmDeleteVariant}
+                  className="bg-destructive hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          {initialData?.id && (
+            <AlertDialog
+              open={openDeleteDialog}
+              onOpenChange={setOpenDeleteDialog}
+            >
+              <AlertDialogTrigger asChild>
+                <Button type="button" variant="destructive">
+                  Delete Product
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    the product and all its variants.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={onDeleteProduct}
+                    className="bg-destructive hover:bg-destructive/90"
+                  >
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+
+          <Button
+            type="submit"
+            size="lg"
+            className={initialData ? "" : "w-full md:w-auto ml-auto"}
+          >
             {initialData ? "Update Product" : "Create Product"}
           </Button>
         </div>
