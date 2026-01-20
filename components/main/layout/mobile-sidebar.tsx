@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CategoryTree } from "@/lib/utils";
 import { Brand } from "@/lib/types";
 import { Separator } from "@/components/ui/separator";
@@ -47,6 +47,20 @@ export function MobileSidebar({
   wishlistCount = 0,
 }: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return (
+      <Button variant="ghost" size="icon" className="md:hidden mr-2">
+        <Menu className="h-6 w-6" />
+        <span className="sr-only">Open Menu</span>
+      </Button>
+    );
+  }
 
   const renderMobileCategory = (category: CategoryTree) => {
     if (category.children && category.children.length > 0) {

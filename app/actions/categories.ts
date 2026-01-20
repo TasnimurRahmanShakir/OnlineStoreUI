@@ -82,10 +82,47 @@ export async function getAllCategoriesAction(isPaged: boolean = false) {
   const result = await api.get<any>("/Category", config);
 
   if (result.success && result.data) {
+    // If raw array, return it (unlikely given PaginatedResult type, but unsafe cast in api-client allows it)
     if (Array.isArray(result.data)) {
-      return result.data;
+      return result.data as unknown as Category[];
     }
-    return result.data.items || [];
+
+    const firstPageItems = result.data.items || [];
+    // If paged mode or no more pages, return what we have
+    if (isPaged || !result.data.hasNextPage) {
+      // console.log(`getAllCategoriesAction: fetching ${firstPageItems.length} items (Page 1/${result.data.totalPages || 1})`);
+      return firstPageItems;
+    }
+
+    // If "fetch all" mode and multiple pages exist
+    const totalPages = result.data.totalPages;
+    // console.log(`getAllCategoriesAction: fetching Page 1 of ${totalPages}. Triggering recursive fetch...`);
+
+    const pagePromises = [];
+    for (let page = 2; page <= totalPages; page++) {
+      pagePromises.push(
+        api.get<PaginatedResult<Category>>("/Category", {
+          params: { page, limit: result.data.pageSize },
+        }),
+      );
+    }
+
+    const otherPagesResults = await Promise.all(pagePromises);
+    const allItems = [...firstPageItems];
+
+    otherPagesResults.forEach((res, index) => {
+      if (res.success && res.data && res.data.items) {
+        // console.log(`getAllCategoriesAction: fetched Page ${index + 2} (${res.data.items.length} items)`);
+        allItems.push(...res.data.items);
+      } else {
+        console.error(
+          `getAllCategoriesAction: failed to fetch Page ${index + 2}`,
+        );
+      }
+    });
+
+    // console.log(`getAllCategoriesAction: Total items fetched: ${allItems.length}`);
+    return allItems;
   }
 
   return [];
