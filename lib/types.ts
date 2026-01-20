@@ -9,6 +9,11 @@ export type Category = {
   parentId?: string;
   createdAt?: string;
 };
+ 
+export type Brand = {
+  id: string;
+  name: string;
+};
 
 export type Product = {
   id: string;

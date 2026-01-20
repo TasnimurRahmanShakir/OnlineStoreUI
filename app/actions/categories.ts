@@ -17,7 +17,7 @@ export interface CategoryOption {
 // Backend returns the PaginatedResult directly
 export async function getCategoriesAction(
   page: number = 1,
-  limit: number = 10
+  limit: number = 10,
 ) {
   return await api.get<PaginatedResult<Category>>("/Category", {
     params: { page, limit },
@@ -38,11 +38,11 @@ export async function createCategoryAction(values: CategoryFormValues) {
 export async function updateCategoryAction(
   id: string,
   values: CategoryFormValues,
-  path: string = "/admin/categories"
+  path: string = "/admin/categories",
 ) {
   const result = await api.put<ApiResponse<Category>>(
     `/Category/update/${id}`,
-    values
+    values,
   );
 
   if (result.success) {
@@ -64,7 +64,7 @@ export async function deleteCategoryAction(id: string) {
 
 export async function getCategoriesForProductAction() {
   const result = await api.get<{ items: CategoryOption[] }>(
-    "/Category/CategoryName"
+    "/Category/CategoryName",
   );
 
   console.log(JSON.stringify(result.data));
@@ -72,4 +72,21 @@ export async function getCategoriesForProductAction() {
     return result.data;
   }
   return { items: [] };
+}
+
+export async function getAllCategoriesAction(isPaged: boolean = false) {
+  const config = isPaged
+    ? { params: { page: 1, limit: 10 } }
+    : { params: { page: 1, limit: 1000 } };
+
+  const result = await api.get<any>("/Category", config);
+
+  if (result.success && result.data) {
+    if (Array.isArray(result.data)) {
+      return result.data;
+    }
+    return result.data.items || [];
+  }
+
+  return [];
 }
