@@ -30,37 +30,32 @@ export function ProductImageGallery({
     Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true }),
   );
 
-  // Collect all unique images
   const images = React.useMemo(() => {
-    const imgs = [
-      {
-        id: "base",
-        src: product.baseImage,
-        alt: product.name,
-        isBase: true,
-      },
-    ];
-
-    if (product.variants) {
-      product.variants.forEach((v) => {
-        if (v.image && !imgs.some((img) => img.src === v.image)) {
-          imgs.push({
-            id: v.id,
-            src: v.image,
-            alt: `${product.name} - ${v.color} ${v.size}`,
-            isBase: false,
-          });
-        }
-      });
+    if (!product.images || product.images.length === 0) {
+      return product.baseImage
+        ? [
+            {
+              id: "base",
+              src: product.baseImage,
+              alt: product.name,
+              isBase: true,
+            },
+          ]
+        : [];
     }
-    return imgs;
+
+    return product.images.map((img, index) => ({
+      id: `img-${index}`,
+      src: img,
+      alt: `${product.name} - View ${index + 1}`,
+      isBase: index === 0,
+    }));
   }, [product]);
 
-  // Sync with selected variant
   React.useEffect(() => {
     if (selectedVariant && selectedVariant.image && api) {
-      const index = images.findIndex(
-        (img) => img.src === selectedVariant.image,
+      const index = images.findIndex((img) =>
+        img.src.includes(selectedVariant.image!),
       );
       if (index !== -1) {
         api.scrollTo(index);
@@ -69,21 +64,15 @@ export function ProductImageGallery({
   }, [selectedVariant, api, images]);
 
   React.useEffect(() => {
-    if (!api) {
-      return;
-    }
-
+    if (!api) return;
     setCurrent(api.selectedScrollSnap());
-
     api.on("select", () => {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
 
   const handleThumbnailClick = (index: number) => {
-    if (api) {
-      api.scrollTo(index);
-    }
+    if (api) api.scrollTo(index);
   };
 
   const getImageUrl = (url: string) => {
@@ -92,27 +81,25 @@ export function ProductImageGallery({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 w-full">
       {/* Main Image Carousel */}
       <Carousel
         setApi={setApi}
         plugins={[plugin.current]}
-        className="w-full bg-gray-50 rounded-lg overflow-hidden border border-gray-100"
-        opts={{
-          loop: true,
-        }}
+        className="w-full bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100"
+        opts={{ loop: true }}
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
       >
-        <CarouselContent>
+        <CarouselContent className="-ml-0">
           {images.map((image, index) => (
-            <CarouselItem key={image.id}>
+            <CarouselItem key={image.id} className="pl-0">
               <div className="relative aspect-square w-full overflow-hidden flex items-center justify-center bg-white">
                 <Image
                   src={getImageUrl(image.src)}
                   alt={image.alt}
                   fill
-                  className="object-contain"
+                  className="object-contain p-2"
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority={index === 0}
                 />
@@ -120,23 +107,24 @@ export function ProductImageGallery({
             </CarouselItem>
           ))}
         </CarouselContent>
+        {/* Hide arrows on very small screens, show on tablet+ */}
         {images.length > 1 && (
           <>
-            <CarouselPrevious className="left-4" />
-            <CarouselNext className="right-4" />
+            <CarouselPrevious className="left-2 bg-white/80 hover:bg-white border-gray-200 h-8 w-8 sm:h-10 sm:w-10" />
+            <CarouselNext className="right-2 bg-white/80 hover:bg-white border-gray-200 h-8 w-8 sm:h-10 sm:w-10" />
           </>
         )}
       </Carousel>
 
       {/* Thumbnails */}
       {images.length > 1 && (
-        <div className="flex gap-4 overflow-x-auto pb-2 px-1 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-2 px-1 scrollbar-hide w-full justify-start md:justify-center">
           {images.map((image, index) => (
             <button
               key={image.id}
               onClick={() => handleThumbnailClick(index)}
               className={cn(
-                "relative shrink-0 w-20 h-20 rounded-md overflow-hidden border-2 transition-all",
+                "relative shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-md overflow-hidden border-2 transition-all",
                 current === index
                   ? "border-primary ring-2 ring-primary/20"
                   : "border-transparent opacity-70 hover:opacity-100",

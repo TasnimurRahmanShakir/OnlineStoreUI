@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Star, Heart, ShoppingCart, Minus, Plus, Share2 } from "lucide-react";
+import { Star, Heart, ShoppingCart, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface ProductInfoProps {
   product: Product;
@@ -33,7 +34,6 @@ export function ProductInfo({
   currentPrice,
   isOutOfStock,
   isVariantAvailable,
-  discountPercentage,
 }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
 
@@ -42,40 +42,49 @@ export function ProductInfo({
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-5 md:gap-6 w-full">
       {/* Header */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
             {product.brand}
           </p>
-          <div className="flex gap-2">
-            {product.badges?.map((badge) => (
+          <div className="flex flex-wrap gap-2">
+            {product.isOnSale && product.discountLabel && (
               <Badge
-                key={badge}
+                variant="destructive"
+                className="px-2 py-0.5 text-xs font-semibold"
+              >
+                {product.discountLabel} OFF
+              </Badge>
+            )}
+            {product.categoryName && (
+              <Badge
                 variant="secondary"
                 className="px-2 py-0.5 text-xs font-semibold"
               >
-                {badge}
+                {product.categoryName}
               </Badge>
-            ))}
+            )}
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
           {product.name}
         </h1>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4">
           <div className="flex items-center gap-1">
-            <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-            <span className="font-semibold">{product.rating || 0}</span>
-            <span className="text-muted-foreground">
+            <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
+            <span className="font-semibold text-sm sm:text-base">
+              {product.averageRating || 0}
+            </span>
+            <span className="text-muted-foreground text-xs sm:text-sm">
               ({product.reviewCount || 0} reviews)
             </span>
           </div>
-          <Separator orientation="vertical" className="h-5" />
-          <span className="text-muted-foreground text-sm">
+          <Separator orientation="vertical" className="h-4 sm:h-5" />
+          <span className="text-muted-foreground text-xs sm:text-sm">
             {product.soldCount || 0} sold
           </span>
         </div>
@@ -83,59 +92,55 @@ export function ProductInfo({
 
       {/* Pricing */}
       <div className="flex items-baseline gap-3">
-        <span className="text-3xl font-bold text-primary">
+        <span className="text-2xl sm:text-3xl font-bold text-primary">
           ৳{currentPrice.toFixed(2)}
         </span>
-        {product.originalPrice && product.originalPrice > currentPrice ? (
-          <>
-            <span className="text-lg text-muted-foreground line-through">
-              ৳{product.originalPrice.toFixed(2)}
-            </span>
-            {discountPercentage > 0 && (
-              <Badge className="bg-red-500 hover:bg-red-600">
-                -{discountPercentage}%
-              </Badge>
-            )}
-          </>
-        ) : null}
+        {product.isOnSale && product.originalPrice > currentPrice && (
+          <span className="text-base sm:text-lg text-muted-foreground line-through">
+            ৳{product.originalPrice.toFixed(2)}
+          </span>
+        )}
       </div>
 
       <Separator />
 
       {/* Variant Selectors */}
-      <div className="space-y-6">
-        {/* Colors */}
+      <div className="space-y-5">
         {colors.length > 0 && (
           <div className="space-y-3">
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-gray-900 block">
               Color:{" "}
               <span className="text-muted-foreground">{selectedColor}</span>
             </span>
             <div className="flex flex-wrap gap-2">
               {colors.map((color) => {
-                const available = isVariantAvailable(color, selectedSize);
+                const isColorInStock =
+                  product.variants?.some(
+                    (v) =>
+                      v.color === color &&
+                      v.stockQuantity > 0 &&
+                      (v.isActive ?? true),
+                  ) ?? false;
+
                 return (
                   <button
                     key={color}
                     onClick={() => setSelectedColor(color)}
-                    disabled={!available && color !== selectedColor} // Keep selected even if unavailable to allow switching size
+                    disabled={!isColorInStock}
                     className={cn(
-                      "group relative flex items-center justify-center -m-0.5 p-0.5 rounded-full ring-2 ring-offset-2 transition-all",
+                      "group relative flex items-center justify-center m-0.5 p-0.5 rounded-full ring-2 ring-offset-2 transition-all",
                       selectedColor === color
                         ? "ring-primary"
                         : "ring-transparent hover:ring-gray-300",
-                      !available && "opacity-50 cursor-not-allowed",
+                      !isColorInStock && "opacity-50 cursor-not-allowed",
                     )}
                   >
-                    {/* Simple Color Circle - In a real app mapping color names to hex codes is better */}
                     <span
-                      className={cn(
-                        "h-8 w-8 rounded-full border border-black/10",
-                      )}
+                      className="h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-black/10 shadow-sm"
                       style={{ backgroundColor: color.toLowerCase() }}
                       title={color}
                     />
-                    {!available && (
+                    {!isColorInStock && (
                       <div className="absolute inset-0 flex items-center justify-center">
                         <div className="h-0.5 w-full bg-red-500 rotate-45 transform" />
                       </div>
@@ -155,9 +160,12 @@ export function ProductInfo({
                 Size:{" "}
                 <span className="text-muted-foreground">{selectedSize}</span>
               </span>
-              <button className="text-xs text-primary underline">
+              <Link
+                href="#description"
+                className="text-xs text-primary underline"
+              >
                 Size Guide
-              </button>
+              </Link>
             </div>
             <div className="flex flex-wrap gap-2">
               {sizes.map((size) => {
@@ -169,7 +177,7 @@ export function ProductInfo({
                     onClick={() => setSelectedSize(size)}
                     disabled={!available && size !== selectedSize}
                     className={cn(
-                      "min-w-12 h-10",
+                      "min-w-12 h-10 px-3",
                       selectedSize === size &&
                         "ring-2 ring-offset-2 ring-primary border-primary",
                       !available && "opacity-50 line-through",
@@ -186,37 +194,47 @@ export function ProductInfo({
 
       <Separator />
 
-      {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        {/* Quantity */}
-        <div className="flex items-center border rounded-md">
+      <div className="flex flex-col gap-4">
+        <div className="flex gap-4 w-full">
+          <div className="flex items-center border rounded-md h-12 flex-1 sm:flex-none sm:w-auto">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-full w-12 rounded-none px-0 hover:bg-gray-100"
+              onClick={() => handleQuantityChange(-1)}
+              disabled={quantity <= 1 || isOutOfStock}
+            >
+              <Minus className="h-4 w-4" />
+            </Button>
+            <div className="flex-1 sm:w-12 text-center font-medium flex items-center justify-center border-x h-full">
+              {quantity}
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-full w-12 rounded-none px-0 hover:bg-gray-100"
+              onClick={() => handleQuantityChange(1)}
+              disabled={isOutOfStock}
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+
           <Button
-            variant="ghost"
+            variant="outline"
             size="icon"
-            className="h-11 w-11 rounded-none px-0"
-            onClick={() => handleQuantityChange(-1)}
-            disabled={quantity <= 1 || isOutOfStock}
+            className="h-12 w-12 shrink-0 border-gray-200"
           >
-            <Minus className="h-4 w-4" />
-          </Button>
-          <span className="w-12 text-center font-medium">{quantity}</span>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-11 w-11 rounded-none px-0"
-            onClick={() => handleQuantityChange(1)}
-            disabled={isOutOfStock}
-          >
-            <Plus className="h-4 w-4" />
+            <Heart className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Add to Cart */}
         <Button
-          className="flex-1 h-11 text-base"
+          className="w-full h-12 text-base font-medium shadow-md transition-transform active:scale-[0.98]"
+          size="lg"
           disabled={isOutOfStock}
           onClick={() => {
-            // Handle Add to Cart
             console.log("Add to cart", {
               product: product.id,
               variant: { color: selectedColor, size: selectedSize },
@@ -227,21 +245,16 @@ export function ProductInfo({
           <ShoppingCart className="mr-2 h-5 w-5" />
           {isOutOfStock ? "Out of Stock" : "Add to Cart"}
         </Button>
-
-        {/* Wishlist */}
-        <Button variant="outline" size="icon" className="h-11 w-11">
-          <Heart className="h-5 w-5" />
-        </Button>
       </div>
 
-      {/* Features / Benefits (Mock) */}
-      <div className="grid grid-cols-2 gap-4 pt-4 text-sm text-muted-foreground">
+      {/* Features */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-sm text-muted-foreground bg-gray-50 p-3 rounded-lg">
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-green-500" />
+          <div className="h-2 w-2 rounded-full bg-green-500 shrink-0" />
           <span>Free Delivery on orders over ৳5000</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-2 w-2 rounded-full bg-blue-500" />
+          <div className="h-2 w-2 rounded-full bg-blue-500 shrink-0" />
           <span>30 Day Return Policy</span>
         </div>
       </div>

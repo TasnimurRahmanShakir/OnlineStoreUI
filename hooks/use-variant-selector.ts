@@ -10,28 +10,48 @@ export function useVariantSelector({ product }: UseVariantSelectorProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [currentVariant, setCurrentVariant] = useState<Variant | null>(null);
 
-  // Extract unique options
   const colors = useMemo(() => {
-    if (!product.variants) return [];
-    return Array.from(new Set(product.variants.map((v) => v.color))).filter(
-      Boolean,
-    );
-  }, [product.variants]);
+    return product.availableColors || [];
+  }, [product.availableColors]);
 
   const sizes = useMemo(() => {
-    if (!product.variants) return [];
-    return Array.from(new Set(product.variants.map((v) => v.size))).filter(
-      Boolean,
-    );
-  }, [product.variants]);
-
-  // Initial selection
-  useEffect(() => {
-    if (product.variants && product.variants.length > 0) {
-      if (!selectedColor && colors.length > 0) setSelectedColor(colors[0]);
-      if (!selectedSize && sizes.length > 0) setSelectedSize(sizes[0]);
+    if (product.availableOptions && product.availableOptions.length > 0) {
+      const allSizes = new Set<string>();
+      product.availableOptions.forEach((opt) =>
+        opt.sizes.forEach((s) => allSizes.add(s)),
+      );
+      return Array.from(allSizes);
     }
-  }, [product.variants, colors, sizes, selectedColor, selectedSize]);
+
+    if (product.variants) {
+      return Array.from(new Set(product.variants.map((v) => v.size))).filter(
+        Boolean,
+      );
+    }
+
+    return [];
+  }, [product.availableOptions, product.variants]);
+
+  useEffect(() => {
+    if (!selectedColor && colors.length > 0) setSelectedColor(colors[0]);
+  }, [colors, selectedColor]);
+
+  useEffect(() => {
+    if (selectedColor && product.availableOptions) {
+      const option = product.availableOptions.find(
+        (o) => o.color === selectedColor,
+      );
+      if (option) {
+        if (!selectedSize || !option.sizes.includes(selectedSize)) {
+          if (option.sizes.length > 0) {
+            setSelectedSize(option.sizes[0]);
+          } else {
+            setSelectedSize(null);
+          }
+        }
+      }
+    }
+  }, [selectedColor, product.availableOptions, selectedSize, setSelectedSize]);
 
   // Update current variant based on selection
   useEffect(() => {
@@ -46,37 +66,40 @@ export function useVariantSelector({ product }: UseVariantSelectorProps) {
     setCurrentVariant(variant || null);
   }, [selectedColor, selectedSize, product.variants]);
 
-  // Check availability
   const isVariantAvailable = (color: string | null, size: string | null) => {
-    if (!product.variants) return false;
+    if (product.availableOptions && color && size) {
+      const option = product.availableOptions.find((o) => o.color === color);
+      if (!option) return false;
+      if (!option.sizes.includes(size)) return false;
+    }
 
-    // If checking a specific combination
+    if (product.variants) {
+      if (color && size) {
+        const variant = product.variants.find(
+          (v) => v.color === color && v.size === size,
+        );
+        return true;
+      }
+    }
+
+    return true;
+  };
+
+  const isOptionValid = (color: string | null, size: string | null) => {
+    if (!product.availableOptions) return true;
     if (color && size) {
-      const variant = product.variants.find(
-        (v) => v.color === color && v.size === size,
-      );
-      return variant ? variant.stockQuantity > 0 : false;
+      const option = product.availableOptions.find((o) => o.color === color);
+      return option ? option.sizes.includes(size) : false;
     }
-
-    // If checking only color (is there ANY size available for this color?)
-    if (color && !size) {
-      return product.variants.some(
-        (v) => v.color === color && v.stockQuantity > 0,
-      );
-    }
-
-    // If checking only size (is there ANY color available for this size?)
-    if (!color && size) {
-      return product.variants.some(
-        (v) => v.size === size && v.stockQuantity > 0,
-      );
-    }
-
-    return false;
+    return true;
   };
 
   const currentPrice =
-    currentVariant?.price || product.salePrice || product.originalPrice || 0;
+    product.salePrice && product.isOnSale
+      ? product.salePrice
+      : product.originalPrice;
+
+  // Stock logic for the specific selected variant
   const isOutOfStock = currentVariant
     ? currentVariant.stockQuantity <= 0
     : false;
@@ -84,7 +107,7 @@ export function useVariantSelector({ product }: UseVariantSelectorProps) {
   // Calculate discount percentage
   const discountPercentage = useMemo(() => {
     const original = product.originalPrice || 0;
-    const current = currentPrice;
+    const current = currentPrice || 0;
 
     if (original > current && original > 0) {
       return Math.round(((original - current) / original) * 100);
@@ -102,7 +125,7 @@ export function useVariantSelector({ product }: UseVariantSelectorProps) {
     currentVariant,
     currentPrice,
     isOutOfStock,
-    isVariantAvailable,
+    isVariantAvailable: isOptionValid,
     discountPercentage,
   };
 }

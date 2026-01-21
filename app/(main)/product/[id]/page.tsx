@@ -6,56 +6,90 @@ import {
 } from "@/app/actions/product";
 
 // Mock data fallback if API fails or returns null (for development)
+// Mock data fallback if API fails or returns null (for development)
 const MOCK_PRODUCT = {
-  id: "1",
-  name: "Wireless Noise-Cancelling Headphones",
-  brand: "Sony",
-  description: "<p>Experience world-class noise cancellation...</p>",
-  baseImage:
-    "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000&auto=format&fit=crop",
-  priceSummary: "$249.99",
-  salePrice: 249.99,
-  originalPrice: 299.99,
-  totalStock: 50,
-  rating: 4.8,
-  reviewCount: 420,
-  soldCount: 1500,
-  badges: ["Sale", "-15%"],
+  id: "a1b2c3d4-e5f6-7890-1234-56789abcdef0",
+  name: "Urban Explorer Waterproof Backpack",
+  brand: "Nomad Gear",
+  description:
+    "<p>A durable, lightweight backpack designed for city commute and weekend adventures. Features a padded 15-inch laptop sleeve and water-resistant coating.</p>",
+  categoryName: "Bags & Travel",
+  originalPrice: 120.0,
+  salePrice: 108.0,
+  discountLabel: "10%",
+  isOnSale: true,
+  totalStock: 45,
+  skus: ["BAG-BLK-STD-001", "BAG-GRY-STD-002"],
+  images: [
+    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop", // Base
+    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop", // Black
+    "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1000&auto=format&fit=crop", // Grey
+    "https://images.unsplash.com/photo-1491637639811-60e2756cc1c7?q=80&w=1000&auto=format&fit=crop", // Lifestyle
+  ],
+  averageRating: 4.8,
+  reviewCount: 12,
+  availableColors: ["Black", "Grey", "Navy"],
+  availableOptions: [
+    {
+      color: "Black",
+      sizes: ["Standard", "Large"],
+    },
+    {
+      color: "Grey",
+      sizes: ["Standard"],
+    },
+    {
+      color: "Navy",
+      sizes: ["Standard"],
+    },
+  ],
   variants: [
     {
       id: "v1",
       color: "Black",
       size: "Standard",
-      sku: "WH-1000XM5-BLK",
-      price: 249.99,
-      stockQuantity: 20,
       image:
-        "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop",
+      sku: "BAG-BLK-STD-001",
+      stockQuantity: 20,
+      isActive: true,
     },
     {
       id: "v2",
-      color: "Silver",
-      size: "Standard",
-      sku: "WH-1000XM5-SLV",
-      price: 249.99,
-      stockQuantity: 15,
+      color: "Black",
+      size: "Large",
       image:
-        "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?q=80&w=1000&auto=format&fit=crop", // Reusing image for demo
+      sku: "BAG-BLK-LRG-001",
+      stockQuantity: 0,
+      isActive: true,
     },
     {
       id: "v3",
-      color: "Blue",
+      color: "Grey",
       size: "Standard",
-      sku: "WH-1000XM5-BLU",
-      price: 269.99,
-      stockQuantity: 5,
       image:
-        "https://images.unsplash.com/photo-1546435770-a3e426bf472b?q=80&w=1000&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1000&auto=format&fit=crop",
+      sku: "BAG-GRY-STD-002",
+      stockQuantity: 15,
+      isActive: true,
     },
   ],
   reviews: [
-    { rating: 5, comment: "Amazing sound quality!", user: "John Doe" },
-    { rating: 4, comment: "Great but expensive.", user: "Jane Smith" },
+    {
+      id: "r1",
+      Name: "Sarah J.",
+      rating: 5,
+      comment: "Amazing quality! Fits my MacBook Pro perfectly.",
+      datePosted: "Jan 15, 2026",
+    },
+    {
+      id: "r2",
+      Name: "Mike T.",
+      rating: 4,
+      comment: "Great bag, but the side pockets are a bit tight.",
+      datePosted: "Jan 10, 2026",
+    },
   ],
 };
 
@@ -66,22 +100,15 @@ interface PageProps {
 export default async function ProductPage({ params }: PageProps) {
   const { id } = await params;
 
-  // Fetch product data
   const productResult = await getProductByIdAction(id);
   const similarProducts = await getNewArrivalsAction();
 
-  // Use mock data if API fails or returns no data (remove this in production)
   const product =
-    productResult.success && productResult.data ? productResult.data : null; // MOCK_PRODUCT fallback can be added here if needed: || MOCK_PRODUCT
+    productResult.success && productResult.data ? productResult.data : null;
 
-  if (!product && !productResult.success) {
-    // NOTE: For now, I'll return the mock product if API fails so you can see the UI.
-    // In a real app, you'd show notFound() or an error.
-    // return notFound();
-  }
-
-  // Fallback to mock if API returns nothing (for demo purposes)
   const finalProduct = product || MOCK_PRODUCT;
+
+  console.log(finalProduct);
 
   return (
     <div className="bg-white min-h-screen pb-20">

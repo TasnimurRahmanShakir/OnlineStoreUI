@@ -114,7 +114,6 @@ export default async function MainPage() {
   const popularProducts = await fetchPopularProducts();
   const trendingProducts = await fetchFeaturedProducts();
 
-  console.log(newArrivals);
 
   return (
     <div className="flex flex-col gap-8 pb-20">

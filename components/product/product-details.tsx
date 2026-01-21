@@ -32,10 +32,10 @@ export function ProductDetails({
   } = useVariantSelector({ product });
 
   return (
-    <div className="container px-4 py-8 md:px-6 md:py-12">
-      <div className="grid md:grid-cols-2 gap-8 lg:gap-12 xl:gap-16">
+    <div className="container w-full max-w-7xl mx-auto overflow-x-hidden px-4 py-6 md:px-6 md:py-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 xl:gap-16">
         {/* Left Column: Gallery */}
-        <div className="h-fit sticky top-24">
+        <div className="h-fit md:sticky md:top-24 w-full">
           <ProductImageGallery
             product={product}
             selectedVariant={currentVariant}
@@ -43,47 +43,52 @@ export function ProductDetails({
         </div>
 
         {/* Right Column: Info */}
-        <ProductInfo
-          product={product}
-          colors={colors}
-          sizes={sizes}
-          selectedColor={selectedColor}
-          setSelectedColor={setSelectedColor}
-          selectedSize={selectedSize}
-          setSelectedSize={setSelectedSize}
-          currentPrice={currentPrice}
-          isOutOfStock={isOutOfStock}
-          isVariantAvailable={isVariantAvailable}
-          discountPercentage={discountPercentage}
-        />
+        <div className="w-full">
+          <ProductInfo
+            product={product}
+            colors={colors}
+            sizes={sizes}
+            selectedColor={selectedColor}
+            setSelectedColor={setSelectedColor}
+            selectedSize={selectedSize}
+            setSelectedSize={setSelectedSize}
+            currentPrice={currentPrice}
+            isOutOfStock={isOutOfStock}
+            isVariantAvailable={isVariantAvailable}
+            discountPercentage={discountPercentage}
+          />
+        </div>
       </div>
 
       {/* Tabs Section */}
-      <div className="mt-16 md:mt-24">
+      <div className="mt-12 md:mt-24">
         <Tabs defaultValue="description" className="w-full">
-          <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-            <TabsTrigger
-              value="description"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3 text-base"
-            >
-              Description
-            </TabsTrigger>
-            <TabsTrigger
-              value="specifications"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3 text-base"
-            >
-              Specifications
-            </TabsTrigger>
-            <TabsTrigger
-              value="reviews"
-              className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-6 py-3 text-base"
-            >
-              Reviews ({product.reviewCount || 0})
-            </TabsTrigger>
-          </TabsList>
+          <div className="w-full overflow-x-auto pb-2 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+            <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent inline-flex min-w-full md:min-w-0">
+              <TabsTrigger
+                id="description"
+                value="description"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-sm md:text-base whitespace-nowrap"
+              >
+                Description
+              </TabsTrigger>
+              <TabsTrigger
+                value="specifications"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-sm md:text-base whitespace-nowrap"
+              >
+                Specifications
+              </TabsTrigger>
+              <TabsTrigger
+                value="reviews"
+                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-sm md:text-base whitespace-nowrap"
+              >
+                Reviews ({product.reviewCount || 0})
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-          <TabsContent value="description" className="pt-8">
-            <div className="prose max-w-none text-gray-600">
+          <TabsContent value="description" className="pt-6 md:pt-8">
+            <div className="prose prose-sm md:prose-base max-w-none text-gray-600 wrap-break-word">
               {product.description ? (
                 <div
                   dangerouslySetInnerHTML={{ __html: product.description }}
@@ -94,39 +99,50 @@ export function ProductDetails({
             </div>
           </TabsContent>
 
-          <TabsContent value="specifications" className="pt-8">
-            <div className="border rounded-lg p-6 bg-gray-50">
-              <h3 className="font-semibold mb-4">Product Specifications</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-muted-foreground">Brand</span>
-                  <span className="font-medium">{product.brand}</span>
+          <TabsContent value="specifications" className="pt-6 md:pt-8">
+            <div className="border rounded-lg p-4 md:p-6 bg-gray-50">
+              <h3 className="font-semibold mb-4 text-base md:text-lg">
+                Product Specifications
+              </h3>
+              <div className="grid grid-cols-1 gap-4 text-sm">
+                <div className="flex justify-between py-2 border-b last:border-0">
+                  <span className="text-muted-foreground mr-2">Brand</span>
+                  <span className="font-medium text-right wrap-break-word">
+                    {product.brand}
+                  </span>
                 </div>
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-muted-foreground">SKU</span>
-                  <span className="font-medium">
+                <div className="flex justify-between py-2 border-b last:border-0">
+                  <span className="text-muted-foreground mr-2">SKU</span>
+                  <span className="font-medium text-right break-all">
                     {currentVariant?.sku || product.variants?.[0]?.sku || "N/A"}
                   </span>
                 </div>
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-muted-foreground">Material</span>
-                  <span className="font-medium">Premium Cotton Blend</span>
-                </div>
-                <div className="flex justify-between py-2 border-b">
-                  <span className="text-muted-foreground">Fit Type</span>
-                  <span className="font-medium">Regular Fit</span>
+                <div className="flex justify-between py-2 border-b last:border-0">
+                  <span className="text-muted-foreground mr-2">Category</span>
+                  <span className="font-medium text-right wrap-break-word">
+                    {product.categoryName || "General"}
+                  </span>
                 </div>
               </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="reviews" className="pt-8">
+          <TabsContent value="reviews" className="pt-6 md:pt-8">
             <div className="space-y-6">
               {product.reviews && product.reviews.length > 0 ? (
                 product.reviews.map((review, i) => (
                   <div key={i} className="border-b pb-6 last:border-0">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="font-semibold">{review.user}</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
+                      <div className="flex flex-col">
+                        <span className="font-semibold">
+                          {review.Name || review.user}
+                        </span>
+                        {review.datePosted && (
+                          <span className="text-xs text-muted-foreground">
+                            {review.datePosted}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex">
                         {[...Array(5)].map((_, starIndex) => (
                           <span
@@ -143,7 +159,9 @@ export function ProductDetails({
                         ))}
                       </div>
                     </div>
-                    <p className="text-gray-600">{review.comment}</p>
+                    <p className="text-sm md:text-base text-gray-600">
+                      {review.comment}
+                    </p>
                   </div>
                 ))
               ) : (
@@ -156,9 +174,8 @@ export function ProductDetails({
         </Tabs>
       </div>
 
-      {/* Similar Products */}
       {similarProducts.length > 0 && (
-        <div className="mt-16 md:mt-24">
+        <div className="mt-12 md:mt-24">
           <ProductShowcaseSection
             title="You Might Also Like"
             products={similarProducts}

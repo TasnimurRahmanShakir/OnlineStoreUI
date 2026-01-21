@@ -42,8 +42,13 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
         className,
       )}
     >
+      <Link href={`/product/${product.id}`} className="absolute inset-0 z-0">
+        <span className="sr-only">View Product</span>
+      </Link>
+
       {/* Badges */}
-      <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
+      <div className="absolute top-3 left-3 z-10 flex flex-col gap-2 pointer-events-none">
+        {/* Pointer events none on container, auto on badges if they need interaction? standard badges don't. */}
         {badges.map((badge) => (
           <Badge
             key={badge}
@@ -61,7 +66,7 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
       </div>
 
       {/* Image Area */}
-      <div className="relative aspect-3/4 w-full bg-gray-50 overflow-hidden">
+      <div className="relative aspect-[3/4] w-full bg-gray-50 overflow-hidden">
         <Image
           src={
             (product.baseImage?.startsWith("http")
@@ -77,11 +82,11 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
         />
 
         {/* Overlay Actions */}
-        <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+        <div className="absolute inset-0 z-10 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 pointer-events-none">
           <Button
             size="icon"
             variant="secondary"
-            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-auto"
             title="Add to Wishlist"
           >
             <Heart className="h-5 w-5" />
@@ -89,7 +94,7 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
           <Button
             size="icon"
             variant="secondary"
-            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-blue-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75"
+            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-blue-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 pointer-events-auto"
             title="Quick View"
           >
             <Eye className="h-5 w-5" />
@@ -105,11 +110,9 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
         </p>
 
         {/* Title */}
-        <Link href={`/product/${product.id}`} className="block">
-          <h3 className="font-bold text-gray-900 leading-tight line-clamp-2 min-h-10 hover:text-primary transition-colors">
-            {product.name}
-          </h3>
-        </Link>
+        <h3 className="font-bold text-gray-900 leading-tight line-clamp-2 min-h-10 group-hover:text-primary transition-colors relative z-0">
+          {product.name}
+        </h3>
 
         {/* Metrics: Rating & Sold */}
         <div className="flex items-center justify-between text-xs text-muted-foreground">

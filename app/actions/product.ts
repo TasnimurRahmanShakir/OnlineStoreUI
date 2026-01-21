@@ -48,7 +48,7 @@ export async function deleteVariantAction(id: string) {
 }
 
 export async function getProductByIdAction(id: string) {
-  const result = await api.get<Product>(`/Product/${id}`);
+  const result = await api.get<Product>(`/Product/details/${id}`);
   return result;
 }
 
