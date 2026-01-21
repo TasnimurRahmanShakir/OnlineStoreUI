@@ -51,8 +51,6 @@ const variantSchema = z.object({
   id: z.string().optional(),
   color: z.string().min(1, "Color is required"),
   size: z.string().min(1, "Size is required"),
-  price: z.coerce.number().min(0, "Price must be positive"),
-  discount: z.string().optional(),
   stockQuantity: z.coerce.number().int().min(0, "Stock must be positive"),
   image: z.any().optional(),
 });
@@ -62,6 +60,8 @@ const productSchema = z.object({
   description: z.string().optional(),
   brand: z.string().min(1, "Brand is required"),
   categoryId: z.string().min(1, "Category is required"),
+  price: z.coerce.number().min(0, "Price must be positive"),
+  discount: z.string().optional(),
   isActive: z.boolean().default(true),
   baseImage: z.any().optional(),
   variants: z.array(variantSchema),
@@ -86,12 +86,13 @@ export default function ProductForm({
           description: initialData.description || "",
           brand: initialData.brand || "",
           categoryId: initialData.categoryId || "",
+          price: initialData.price || 0,
+          discount: initialData.discount || "",
           isActive: initialData.isActive ?? true,
           baseImage: undefined, // Files can't be set programmatically easily
           variants:
             initialData.variants?.map((v: any) => ({
               ...v,
-              discount: v.discount || "",
               image: undefined,
             })) || [],
         }
@@ -100,14 +101,14 @@ export default function ProductForm({
           description: "",
           brand: "",
           categoryId: "",
+          price: 0,
+          discount: "",
           isActive: true, // Default to true for new products?
           baseImage: undefined,
           variants: [
             {
               color: "",
               size: "",
-              price: 0,
-              discount: "",
               stockQuantity: 0,
               image: undefined,
             },
@@ -193,6 +194,10 @@ export default function ProductForm({
     formData.append("categoryId", values.categoryId);
     formData.append("description", values.description || "");
     formData.append("isActive", String(values.isActive));
+    formData.append("price", values.price.toString());
+    if (values.discount) {
+      formData.append("discount", values.discount);
+    }
 
     if (values.baseImage?.[0]) {
       formData.append("baseImage", values.baseImage[0]);
@@ -202,10 +207,6 @@ export default function ProductForm({
     values.variants.forEach((variant, index) => {
       formData.append(`variants[${index}].color`, variant.color);
       formData.append(`variants[${index}].size`, variant.size);
-      formData.append(`variants[${index}].price`, variant.price.toString());
-      if (variant.discount) {
-        formData.append(`variants[${index}].discount`, variant.discount);
-      }
       formData.append(
         `variants[${index}].stockQuantity`,
         variant.stockQuantity.toString(),
@@ -307,6 +308,35 @@ export default function ProductForm({
               />
             </div>
 
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. 25.00" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="discount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Discount</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. 10 or 10%" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name="isActive"
@@ -386,8 +416,6 @@ export default function ProductForm({
                 append({
                   color: "",
                   size: "",
-                  price: 0,
-                  discount: "",
                   stockQuantity: 0,
                   image: undefined,
                 })
@@ -431,40 +459,12 @@ export default function ProductForm({
 
                 <FormField
                   control={form.control}
-                  name={`variants.${index}.discount`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Discount</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g. 10 or 10%" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name={`variants.${index}.size`}
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Size</FormLabel>
                       <FormControl>
                         <Input placeholder="e.g. S, M, 42..." {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={`variants.${index}.price`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price</FormLabel>
-                      <FormControl>
-                        <Input placeholder="e.g. 25.00" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

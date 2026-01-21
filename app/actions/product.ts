@@ -2,7 +2,7 @@
 
 import { api } from "@/lib/api-client";
 import { revalidatePath } from "next/cache";
-import { PaginatedResult, Product } from "@/lib/types";
+import { PaginatedResult, Product, NewArrivals } from "@/lib/types";
 
 export async function createProductAction(formData: FormData) {
   const result = await api.post("/Product/add", formData);
@@ -45,4 +45,14 @@ export async function deleteProductAction(id: string) {
 
 export async function deleteVariantAction(id: string) {
   return await api.del(`/Variant/Delete/${id}`);
+}
+
+export async function getProductByIdAction(id: string) {
+  const result = await api.get<Product>(`/Product/${id}`);
+  return result;
+}
+
+export async function getNewArrivalsAction() {
+  const result = await api.get<NewArrivals[]>("/Product/new-arrivals");
+  return result.success ? result.data || [] : [];
 }
