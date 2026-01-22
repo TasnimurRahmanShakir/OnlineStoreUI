@@ -209,7 +209,7 @@ export function MobileSidebar({
                     {brands.slice(0, 10).map((brand) => (
                       <Link
                         key={brand.id}
-                        href={`/store?brandId=${brand.id}`}
+                        href={`/store?brand=${brand.name}`}
                         onClick={() => setOpen(false)}
                         className="py-1.5 text-sm text-foreground/80 hover:text-primary"
                       >

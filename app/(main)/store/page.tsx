@@ -50,6 +50,7 @@ export default async function StorePage(props: StorePageProps) {
 
   const products =
     productsData.success && productsData.data ? productsData.data.items : [];
+
   const totalItems =
     productsData.success && productsData.data
       ? productsData.data.totalItems

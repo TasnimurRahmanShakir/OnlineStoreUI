@@ -90,5 +90,26 @@ export async function getStoreProductsAction(params: {
   if (params.categoryId) queryParams.CategoryIds = params.categoryId;
   if (params.brand) queryParams.Brands = params.brand;
 
-  return await api.get("/Product/store", { params: queryParams });
+  const result = await api.get("/Product/store", { params: queryParams });
+
+  if (result.success && result.data && result.data.items) {
+    // Map PascalCase to camelCase
+    result.data.items = result.data.items.map((item: any) => ({
+      ...item,
+      id: item.Id || item.id,
+      name: item.Name || item.name,
+      brand: item.Brand || item.brand,
+      baseImage: item.BaseImage || item.baseImage,
+      priceSummary: item.PriceSummary || item.priceSummary,
+      salePrice: item.SalePrice || item.salePrice,
+      originalPrice: item.OriginalPrice || item.originalPrice,
+      rating: item.Rating || item.rating,
+      reviewCount: item.ReviewCount || item.reviewCount,
+      soldCount: item.SoldCount || item.soldCount,
+      badges: item.Badges || item.badges,
+      // Map other fields if necessary or keep existing
+    }));
+  }
+
+  return result;
 }

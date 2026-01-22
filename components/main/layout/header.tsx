@@ -168,7 +168,7 @@ export function Header({
                   asChild
                   className="cursor-pointer"
                 >
-                  <Link href={`/store?brandId=${brand.id}`} className="w-full">
+                  <Link href={`/store?brand=${brand.name}`} className="w-full">
                     {brand.name}
                   </Link>
                 </DropdownMenuItem>
