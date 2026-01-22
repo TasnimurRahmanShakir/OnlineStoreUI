@@ -21,6 +21,7 @@ import {
   Tag,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { CategoryTree } from "@/lib/utils";
@@ -48,6 +49,17 @@ export function MobileSidebar({
 }: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get("search")?.toString().trim();
+    if (query) {
+      router.push(`/store?search=${encodeURIComponent(query)}`);
+      setOpen(false);
+    }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -79,7 +91,7 @@ export function MobileSidebar({
           <AccordionContent className="pl-6 pb-2">
             <div className="flex flex-col gap-1 border-l pl-2">
               <Link
-                href={`/store?category=${category.name}`}
+                href={`/store?categoryId=${category.id}`}
                 onClick={() => setOpen(false)}
                 className="py-1.5 text-sm text-foreground/80 hover:text-primary"
               >
@@ -95,7 +107,7 @@ export function MobileSidebar({
     return (
       <Link
         key={category.id}
-        href={`/store?category=${category.name}`}
+        href={`/store?categoryId=${category.id}`}
         onClick={() => setOpen(false)}
         className="flex items-center gap-2 rounded-lg px-0 py-2 text-sm font-medium hover:bg-accent/50 transition-colors text-foreground/80 hover:text-foreground"
       >
@@ -126,14 +138,15 @@ export function MobileSidebar({
 
         <div className="flex-1 overflow-y-auto py-6 px-6 flex flex-col gap-6">
           {/* Search */}
-          <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
+              name="search"
               type="search"
               placeholder="Search products..."
               className="pl-9 h-11 bg-muted/30"
             />
-          </div>
+          </form>
 
           <div className="flex flex-col gap-2">
             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
@@ -196,7 +209,7 @@ export function MobileSidebar({
                     {brands.slice(0, 10).map((brand) => (
                       <Link
                         key={brand.id}
-                        href={`/store?brand=${brand.name}`}
+                        href={`/store?brandId=${brand.id}`}
                         onClick={() => setOpen(false)}
                         className="py-1.5 text-sm text-foreground/80 hover:text-primary"
                       >

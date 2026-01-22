@@ -1,7 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Search, ShoppingCart, Heart, User, ChevronDown } from "lucide-react";
+import { useDebounce } from "@/hooks/use-debounce";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -30,12 +33,53 @@ export function Header({
   cartCount = 0,
   wishlistCount = 0,
 }: HeaderProps) {
+  const router = useRouter();
+
+  /* Debounced Search Logic */
+  const searchParams = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search") || "",
+  );
+  const debouncedSearch = useDebounce(searchTerm, 500);
+
+  // Sync state with URL search param if it changes externally
+  useEffect(() => {
+    setSearchTerm(searchParams.get("search") || "");
+  }, [searchParams]);
+
+  useEffect(() => {
+    const currentSearch = searchParams.get("search") || "";
+
+    if (debouncedSearch !== currentSearch) {
+      const params = new URLSearchParams(searchParams.toString());
+      if (debouncedSearch) {
+        params.set("search", debouncedSearch);
+      } else {
+        params.delete("search");
+      }
+
+      if (window.location.pathname === "/store") {
+        params.set("page", "1");
+        router.push(`/store?${params.toString()}`);
+      } else {
+        router.push(`/store?search=${encodeURIComponent(debouncedSearch)}`);
+      }
+    }
+  }, [debouncedSearch, router, searchParams]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   const renderCategory = (category: CategoryTree) => {
     if (category.children && category.children.length > 0) {
       return (
         <DropdownMenuSub key={category.id}>
           <DropdownMenuSubTrigger className="cursor-pointer">
-            <Link href={`/store?category=${category.name}`} className="w-full">
+            <Link href={`/store?categoryId=${category.id}`} className="w-full">
               {category.name}
             </Link>
           </DropdownMenuSubTrigger>
@@ -47,7 +91,7 @@ export function Header({
     }
     return (
       <DropdownMenuItem key={category.id} asChild className="cursor-pointer">
-        <Link href={`/store?category=${category.name}`} className="w-full">
+        <Link href={`/store?categoryId=${category.id}`} className="w-full">
           {category.name}
         </Link>
       </DropdownMenuItem>
@@ -124,7 +168,7 @@ export function Header({
                   asChild
                   className="cursor-pointer"
                 >
-                  <Link href={`/store?brand=${brand.name}`} className="w-full">
+                  <Link href={`/store?brandId=${brand.id}`} className="w-full">
                     {brand.name}
                   </Link>
                 </DropdownMenuItem>
@@ -145,14 +189,20 @@ export function Header({
 
         {/* Search Bar - Desktop */}
         <div className="hidden md:flex flex-1 items-center justify-center px-4 lg:px-12">
-          <div className="relative w-full max-w-md lg:max-w-lg">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="relative w-full max-w-md lg:max-w-lg"
+          >
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
+              name="search"
               type="search"
               placeholder="Search products..."
               className="pl-9 w-full bg-muted/50 focus:bg-background transition-colors h-10 lg:h-11 shadow-sm"
+              value={searchTerm}
+              onChange={handleSearchChange}
             />
-          </div>
+          </form>
         </div>
 
         {/* Right Actions */}

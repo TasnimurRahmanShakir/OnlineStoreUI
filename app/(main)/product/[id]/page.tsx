@@ -108,7 +108,6 @@ export default async function ProductPage({ params }: PageProps) {
 
   const finalProduct = product || MOCK_PRODUCT;
 
-  console.log(finalProduct);
 
   return (
     <div className="bg-white min-h-screen pb-20">

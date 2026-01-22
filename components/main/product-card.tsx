@@ -48,7 +48,6 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
 
       {/* Badges */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2 pointer-events-none">
-        {/* Pointer events none on container, auto on badges if they need interaction? standard badges don't. */}
         {badges.map((badge) => (
           <Badge
             key={badge}
@@ -114,7 +113,7 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
           {product.name}
         </h3>
 
-        {/* Metrics: Rating & Sold */}
+        {/*Rating & Sold */}
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-1">
             <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />

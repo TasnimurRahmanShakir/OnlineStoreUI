@@ -17,12 +17,21 @@ export const apiCall = async <T = any>(
     body,
     headers = {},
     params,
-  }: { method?: string; body?: any; headers?: any; params?: any } = {}
+  }: { method?: string; body?: any; headers?: any; params?: any } = {},
 ) => {
   let url = `${BASE_URL}${endpoint}`;
 
   if (params) {
-    const queryString = new URLSearchParams(params).toString();
+    const searchParams = new URLSearchParams();
+    Object.keys(params).forEach((key) => {
+      const value = params[key];
+      if (Array.isArray(value)) {
+        value.forEach((val) => searchParams.append(key, val));
+      } else if (value !== undefined && value !== null) {
+        searchParams.append(key, value.toString());
+      }
+    });
+    const queryString = searchParams.toString();
     if (queryString) {
       url += `?${queryString}`;
     }

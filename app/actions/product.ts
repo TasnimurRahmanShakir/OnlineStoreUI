@@ -1,6 +1,6 @@
 "use server";
 
-import { api } from "@/lib/api-client";
+import { api, BASE_URL2 } from "@/lib/api-client";
 import { revalidatePath } from "next/cache";
 import { PaginatedResult, Product, NewArrivals } from "@/lib/types";
 
@@ -55,4 +55,40 @@ export async function getProductByIdAction(id: string) {
 export async function getNewArrivalsAction() {
   const result = await api.get<NewArrivals[]>("/Product/new-arrivals");
   return result.success ? result.data || [] : [];
+}
+
+interface ProductFilterParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  categoryId?: string | string[];
+  brand?: string | string[];
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: string;
+}
+
+export async function getStoreProductsAction(params: {
+  page?: number;
+  limit?: number;
+  search?: string;
+  categoryId?: string | string[];
+  brand?: string | string[];
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: string;
+}) {
+  const queryParams: any = {
+    PageNumber: params.page || 1,
+    PageSize: params.limit || 24,
+    Sort: params.sort || "newest",
+  };
+
+  if (params.search) queryParams.Search = params.search;
+  if (params.minPrice) queryParams.MinPrice = params.minPrice;
+  if (params.maxPrice) queryParams.MaxPrice = params.maxPrice;
+  if (params.categoryId) queryParams.CategoryIds = params.categoryId;
+  if (params.brand) queryParams.Brands = params.brand;
+
+  return await api.get("/Product/store", { params: queryParams });
 }
