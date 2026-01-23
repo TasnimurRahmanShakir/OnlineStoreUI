@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { Star, Heart, ShoppingCart, Minus, Plus } from "lucide-react";
+import { useCartStore } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { toast } from "sonner";
 
 interface ProductInfoProps {
   product: Product;
@@ -235,11 +237,34 @@ export function ProductInfo({
           size="lg"
           disabled={isOutOfStock}
           onClick={() => {
-            console.log("Add to cart", {
-              product: product.id,
-              variant: { color: selectedColor, size: selectedSize },
-              quantity,
+            if (
+              (colors.length > 0 && !selectedColor) ||
+              (sizes.length > 0 && !selectedSize)
+            ) {
+              // Should ideally be handled by disabling button, but safe guard
+              toast.error("Please select options");
+              return;
+            }
+
+            // Find variant
+            const variant = product.variants.find(
+              (v) =>
+                (colors.length === 0 || v.color === selectedColor) &&
+                (sizes.length === 0 || v.size === selectedSize),
+            );
+
+            useCartStore.getState().addItem({
+              productId: product.id,
+              variantId: variant?.id,
+              name: product.name,
+              price: currentPrice,
+              quantity: quantity,
+              image: product.images?.[0] || product.baseImage,
+              color: selectedColor || undefined,
+              size: selectedSize || undefined,
+              productSlug: product.slug,
             });
+            toast.success("Added to cart");
           }}
         >
           <ShoppingCart className="mr-2 h-5 w-5" />

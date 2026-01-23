@@ -58,6 +58,7 @@ export type AvailableOption = {
 export type Product = {
   id: string;
   name: string;
+  slug: string;
   brand: string;
   description: string;
   categoryName: string;
@@ -118,4 +119,31 @@ export type PaginatedResult<T> = {
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+};
+
+export type CartItem = {
+  productId: string;
+  variantId?: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image?: string;
+  color?: string;
+  size?: string;
+  productSlug: string; // helpful for linking back
+};
+
+export type CartState = {
+  items: CartItem[];
+  isOpen: boolean;
+  addItem: (item: CartItem) => void;
+  removeItem: (productId: string, variantId?: string) => void;
+  updateQuantity: (
+    productId: string,
+    quantity: number,
+    variantId?: string,
+  ) => void;
+  clearCart: () => void;
+  toggleCart: () => void;
+  syncCart: () => Promise<void>; // Explicit sync action if needed, though usually automatic
 };
