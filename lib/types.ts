@@ -147,3 +147,13 @@ export type CartState = {
   toggleCart: () => void;
   syncCart: () => Promise<void>; // Explicit sync action if needed, though usually automatic
 };
+
+export type AuthResponse = {
+  id: string;
+  token: string;
+  refreshToken: string;
+  refreshTokenExpiration: string; // ISO Date string
+  fullName: string;
+  email: string;
+  role: string;
+};

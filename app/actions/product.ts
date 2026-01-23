@@ -1,6 +1,6 @@
 "use server";
 
-import { api, BASE_URL2 } from "@/lib/api-client";
+import { api } from "@/lib/api-client";
 import { revalidatePath } from "next/cache";
 import { PaginatedResult, Product, NewArrivals } from "@/lib/types";
 

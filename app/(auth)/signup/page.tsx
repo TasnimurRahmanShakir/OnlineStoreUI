@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { registerAction } from "@/app/actions/auth";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, {
@@ -36,8 +39,8 @@ const signupSchema = z.object({
   phoneNumber: z.string().min(10, {
     message: "Phone number must be at least 10 digits.",
   }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
+  password: z.string().min(6, {
+    message: "Password must be at least 6 characters.",
   }),
 });
 
@@ -45,6 +48,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -58,11 +62,20 @@ export default function SignupPage() {
 
   async function onSubmit(data: SignupFormValues) {
     setIsLoading(true);
-    // TODO: Implement signup logic
-    console.log(data);
-    setTimeout(() => {
+    try {
+      const result = await registerAction(data);
+
+      if (result.success) {
+        toast.success("Account created successfully. Please sign in.");
+        router.push("/login");
+      } else {
+        toast.error(result.error || "Failed to create account.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   return (

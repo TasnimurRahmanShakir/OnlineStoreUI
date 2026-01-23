@@ -12,7 +12,7 @@ export function OrderSummary() {
     0,
   );
 
-  const shipping = 0; // Free shipping for now
+  const shipping: number = 0; // Free shipping for now
   const total = subtotal + shipping;
 
   return (

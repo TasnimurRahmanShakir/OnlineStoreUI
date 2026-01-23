@@ -20,11 +20,15 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { CategoryTree } from "@/lib/utils";
 import { Brand } from "@/lib/types";
 
+import { logoutAction } from "@/app/actions/auth";
+import { UserSession } from "@/lib/session";
+
 interface HeaderProps {
   categories: CategoryTree[];
   brands: Brand[];
   cartCount?: number;
   wishlistCount?: number;
+  user?: UserSession | null;
 }
 
 export function Header({
@@ -32,6 +36,7 @@ export function Header({
   brands,
   cartCount = 0,
   wishlistCount = 0,
+  user,
 }: HeaderProps) {
   const router = useRouter();
 
@@ -247,16 +252,42 @@ export function Header({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/login" className="w-full font-medium">
-                  Login
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/register" className="w-full">
-                  Register
-                </Link>
-              </DropdownMenuItem>
+              {user ? (
+                <>
+                  <div className="flex items-center justify-start gap-2 p-2">
+                    <div className="flex flex-col space-y-1 leading-none">
+                      <p className="font-medium">{user.fullName}</p>
+                      <p className="w-[200px] truncate text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
+                    </div>
+                  </div>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/profile" className="w-full font-medium">
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer text-red-600 focus:text-red-600"
+                    onClick={() => logoutAction()}
+                  >
+                    Logout
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                <>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/login" className="w-full font-medium">
+                      Login
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link href="/register" className="w-full">
+                      Register
+                    </Link>
+                  </DropdownMenuItem>
+                </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

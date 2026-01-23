@@ -4,15 +4,17 @@ import { getAllCategoriesAction } from "@/app/actions/categories";
 import { getAllBrandsAction } from "@/app/actions/brands";
 import { buildCategoryTree } from "@/lib/utils";
 import { Footer } from "@/components/main/layout/footer";
+import { getSession } from "@/lib/session";
 
 export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [categoriesData, brandsData] = await Promise.all([
+  const [categoriesData, brandsData, session] = await Promise.all([
     getAllCategoriesAction(),
     getAllBrandsAction(),
+    getSession(),
   ]);
 
   const categoryTree = buildCategoryTree(categoriesData);
@@ -26,6 +28,7 @@ export default async function MainLayout({
         brands={brandsData}
         cartCount={cartCount}
         wishlistCount={wishlistCount}
+        user={session}
       />
       <main className="flex-1">{children}</main>
       <Footer />

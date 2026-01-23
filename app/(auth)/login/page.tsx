@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,7 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { loginAction } from "@/app/actions/auth";
 
 const loginSchema = z.object({
   email: z.string().email({
@@ -40,6 +42,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -51,11 +54,24 @@ export default function LoginPage() {
 
   async function onSubmit(data: LoginFormValues) {
     setIsLoading(true);
-    // TODO: Implement login logic
-    console.log(data);
-    setTimeout(() => {
+    try {
+      const result = await loginAction(data);
+
+      if (result.success) {
+        toast.success("Logged in successfully.");
+        if (result.data?.role === "Admin") {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
+      } else {
+        toast.error(result.error || "Invalid email or password.");
+      }
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   }
 
   return (

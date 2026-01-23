@@ -14,11 +14,14 @@ export interface CategoryOption {
   name: string;
 }
 
+import { getSession } from "@/lib/session";
+
 // Backend returns the PaginatedResult directly
 export async function getCategoriesAction(
   page: number = 1,
   limit: number = 10,
 ) {
+  // Assuming public
   return await api.get<PaginatedResult<Category>>("/Category", {
     params: { page, limit },
   });

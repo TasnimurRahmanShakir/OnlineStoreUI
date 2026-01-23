@@ -1,11 +1,6 @@
-import { getSession } from "@/lib/session";
-
-// Using localhost:3000 for the demo to work with the Next.js API routes we created.
-// In real usage, this would be the external API URL: "https://localhost:7232/api"
 export const BASE_URL = "https://localhost:7255/api";
 export const BASE_URL2 = "https://localhost:7255";
 
-// Allow self-signed certificates during development
 if (process.env.NODE_ENV === "development") {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
@@ -37,13 +32,9 @@ export const apiCall = async <T = any>(
     }
   }
 
-  // const session = await getSession();
-  // const token = session?.token;
-
   const config: RequestInit = {
     method,
     headers: {
-      // Authorization: `Bearer ${token}`,
       ...headers,
     },
   };
@@ -62,11 +53,11 @@ export const apiCall = async <T = any>(
   }
 
   try {
-    console.log("url: " + url);
-    console.log("config: " + JSON.stringify(config));
+    // console.log("url: " + url);
+    // console.log("config: " + JSON.stringify(config));
     const response = await fetch(url, config);
 
-    console.log("response: " + url + JSON.stringify(response));
+    // console.log("response: " + url + JSON.stringify(response));
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = "Unable to fetch data";
