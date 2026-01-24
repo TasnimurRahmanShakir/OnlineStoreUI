@@ -40,9 +40,6 @@ export const apiCall = async <T = any>(
       ...headers,
     },
   };
-
-  // Check for session and add token if not already present
-  // Note: cookies() is only available in Server Components / Server Actions
   try {
     const session = await getSession();
     if (session?.token) {
@@ -68,11 +65,12 @@ export const apiCall = async <T = any>(
   }
 
   try {
-    // console.log("url: " + url);
-    // console.log("config: " + JSON.stringify(config));
+    console.log("url: " + url);
+    console.log("config: " + JSON.stringify(config));
+    console.log("body: " + JSON.stringify(body));
     const response = await fetch(url, config);
 
-    // console.log("response: " + url + JSON.stringify(response));
+    console.log("response: " + url + JSON.stringify(response));
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = "Unable to fetch data";

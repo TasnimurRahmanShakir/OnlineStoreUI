@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -17,44 +18,76 @@ import { useCartStore } from "@/hooks/use-cart";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { createOrderAction } from "@/app/actions/order";
 // import { api } from "@/lib/api-client";
 
 const checkoutSchema = z.object({
-  firstName: z.string().min(2, "First name is required"),
-  lastName: z.string().min(2, "Last name is required"),
+  fullName: z.string().min(2, "Full name is required"),
   email: z.string().email("Invalid email address"),
-  address: z.string().min(5, "Address is required"),
-  city: z.string().min(2, "City is required"),
-  postalCode: z.string().min(2, "Postal code is required"),
-  country: z.string().min(2, "Country is required"),
+  phone: z.string().min(10, "Phone number is required"),
+  addressLine: z.string().min(5, "Address is required"),
+  label: z.enum(["Home", "Office"]),
+  isDefault: z.boolean(),
 });
 
 type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
-export function CheckoutForm() {
+interface CheckoutFormProps {
+  userProfile?: {
+    fullName: string;
+    email: string;
+    phoneNumber?: string;
+    addressLine?: string;
+    label?: "Home" | "Office";
+    isDefault?: boolean;
+    addresses?: {
+      addressLine: string;
+      label: "Home" | "Office";
+      isDefault: boolean;
+    }[];
+  } | null;
+}
+
+export function CheckoutForm({
+  userProfile,
+}: CheckoutFormProps) {
   const router = useRouter();
   const { clearCart, items } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  console.log(userProfile);
+  // Find default address or first address
+  const defaultAddress =
+    userProfile?.addresses?.find((addr) => addr.isDefault) || userProfile?.addresses?.[0];
+
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      address: "",
-      city: "",
-      postalCode: "",
-      country: "",
+      fullName: userProfile?.fullName || "",
+      email: userProfile?.email || "",
+      phone: userProfile?.phoneNumber || "",
+      addressLine: defaultAddress?.addressLine || "",
+      label: defaultAddress?.label || "Home",
+      isDefault: defaultAddress?.isDefault ?? false,
     },
   });
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);
     try {
-      // Simulate API call to create order
       const orderData = {
         ...data,
+        FullName: data.fullName,
+        Email: data.email,
+        PhoneNumber: data.phone,
+        Address: data.addressLine,
         items: items.map((item) => ({
           productId: item.productId,
           variantId: item.variantId,
@@ -64,15 +97,15 @@ export function CheckoutForm() {
         total: items.reduce((acc, item) => acc + item.price * item.quantity, 0),
       };
 
-      // Since we don't have a real endpoint yet, we'll simulate success
-      // await api.post("/orders", orderData);
+      const result = await createOrderAction(orderData);
 
-      // Simulate network delay
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      toast.success("Order placed successfully!");
-      clearCart();
-      router.push("/"); // Or to an order confirmation page
+      if (result.success) {
+        toast.success("Order placed successfully!");
+        clearCart();
+        router.push("/");
+      } else {
+        toast.error(result.error || "Something went wrong. Please try again.");
+      }
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -86,10 +119,10 @@ export function CheckoutForm() {
         <div className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
           <FormField
             control={form.control}
-            name="firstName"
+            name="fullName"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>First name</FormLabel>
+              <FormItem className="sm:col-span-2">
+                <FormLabel>Full Name</FormLabel>
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
@@ -100,10 +133,10 @@ export function CheckoutForm() {
 
           <FormField
             control={form.control}
-            name="lastName"
+            name="phone"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Last name</FormLabel>
+              <FormItem className="sm:col-span-2">
+                <FormLabel>Phone Number</FormLabel>
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
@@ -128,12 +161,12 @@ export function CheckoutForm() {
 
           <FormField
             control={form.control}
-            name="address"
+            name="addressLine"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Address</FormLabel>
+                <FormLabel>Address Line</FormLabel>
                 <FormControl>
-                  <Input placeholder="" {...field} />
+                  <Input placeholder="123 Main St" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,42 +175,45 @@ export function CheckoutForm() {
 
           <FormField
             control={form.control}
-            name="city"
+            name="label"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>City</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
+                <FormLabel>Label</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a label" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Home">Home</SelectItem>
+                    <SelectItem value="Office">Office</SelectItem>
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
           />
-
           <FormField
             control={form.control}
-            name="country"
+            name="isDefault"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Country</FormLabel>
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm bg-secondary/20 sm:col-span-2">
                 <FormControl>
-                  <Input placeholder="" {...field} />
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="postalCode"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Postal code</FormLabel>
-                <FormControl>
-                  <Input placeholder="" {...field} />
-                </FormControl>
-                <FormMessage />
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Set as default address</FormLabel>
+                  <p className="text-sm text-muted-foreground">
+                    Use this address for future orders.
+                  </p>
+                </div>
               </FormItem>
             )}
           />

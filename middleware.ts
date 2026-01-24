@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken, isTokenExpiring } from "@/lib/auth-edge";
 
+if (process.env.NODE_ENV === "development") {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+}
+
 const protectedRoutes = ["/profile", "/cart", "/admin"];
 const authRoutes = ["/login", "/signup"];
 
@@ -70,7 +74,7 @@ export async function middleware(request: NextRequest) {
         }
       }
     } catch (error) {
-      console.error("Middleware refresh failed:", error);
+      // console.error("Middleware refresh failed:", error);
     }
   }
 

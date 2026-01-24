@@ -158,3 +158,18 @@ export type AuthResponse = {
   email: string;
   role: string;
 };
+
+export type UserProfile = {
+  id: string;
+  fullName: string;
+  email: string;
+  phoneNumber?: string;
+  addresses?: Address[];
+};
+
+export type Address = {
+  id: string;
+  addressLine: string;
+  label: "Home" | "Office";
+  isDefault: boolean;
+};
