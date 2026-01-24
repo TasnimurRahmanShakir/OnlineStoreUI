@@ -48,8 +48,7 @@ export const apiCall = async <T = any>(
         Authorization: `Bearer ${session.token}`,
       };
     }
-  } catch (error) {
-  }
+  } catch (error) {}
 
   if (body instanceof FormData) {
     config.body = body;
@@ -70,17 +69,42 @@ export const apiCall = async <T = any>(
     console.log("body: " + JSON.stringify(body));
     const response = await fetch(url, config);
 
-    console.log("response: " + url + JSON.stringify(response));
+    console.log("fetch response status:", response.status, response.statusText);
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = "Unable to fetch data";
 
       if (contentType && contentType.includes("application/json")) {
         const errorData = await response.json();
-        errorMessage = errorData.message || errorData.error || errorMessage;
+        errorMessage =
+          errorData.message ||
+          errorData.error ||
+          errorData.detail ||
+          errorData.title ||
+          JSON.stringify(errorData);
       } else {
-        errorMessage = await response.text();
+        const text = await response.text();
+        if (text) {
+          if (text.trim().startsWith("<") || text.includes("<!DOCTYPE html>")) {
+            errorMessage = "A server error occurred.";
+          } else {
+            errorMessage = text;
+          }
+        }
       }
+
+      if (response.status === 401 && errorMessage === "Unable to fetch data") {
+        errorMessage = "Unauthorized: Please login again.";
+      }
+      if (response.status === 403) {
+        if (
+          errorMessage === "Unable to fetch data" ||
+          errorMessage.toLowerCase().includes("forbidden")
+        ) {
+          errorMessage = "You do not have permission to perform this action.";
+        }
+      }
+
       return { error: errorMessage, success: false };
     }
 
@@ -104,4 +128,7 @@ export const api = {
 
   del: <T = any>(endpoint: string, options = {}) =>
     apiCall<T>(endpoint, { method: "DELETE", ...options }),
+
+  patch: <T = any>(endpoint: string, body: any, options = {}) =>
+    apiCall<T>(endpoint, { method: "PATCH", body, ...options }),
 };

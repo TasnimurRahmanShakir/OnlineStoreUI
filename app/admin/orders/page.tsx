@@ -12,13 +12,15 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { getAllOrdersAction } from "@/app/actions/order";
 import { OrderSummary, PaginatedResult } from "@/lib/types";
+import { OrderActions } from "@/components/admin/order-actions";
 
 export default async function OrdersPage({
   searchParams,
 }: {
-  searchParams: { page?: string };
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const currentPage = Number(searchParams.page) || 1;
+  const { page } = await searchParams;
+  const currentPage = Number(page) || 1;
   const limit = 10;
 
   const response = await getAllOrdersAction(currentPage, limit);
@@ -36,7 +38,6 @@ export default async function OrdersPage({
 
   const data = response.data;
 
-  
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
@@ -68,11 +69,10 @@ export default async function OrdersPage({
                     <Badge variant="outline">{order.status}</Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/orders/${order.id}`}>
-                        <Eye className="mr-2 h-4 w-4" /> View
-                      </Link>
-                    </Button>
+                    <OrderActions
+                      orderId={order.id}
+                      currentStatus={order.status}
+                    />
                   </TableCell>
                 </TableRow>
               ))
