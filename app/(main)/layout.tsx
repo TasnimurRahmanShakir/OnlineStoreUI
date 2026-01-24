@@ -23,13 +23,7 @@ export default async function MainLayout({
 
   return (
     <div className="flex min-h-screen flex-col overflow-x-hidden">
-      <Header
-        categories={categoryTree}
-        brands={brandsData}
-        cartCount={cartCount}
-        wishlistCount={wishlistCount}
-        user={session}
-      />
+      <Header categories={categoryTree} brands={brandsData} user={session} />
       <main className="flex-1">{children}</main>
       <Footer />
       <BottomNav cartCount={cartCount} wishlistCount={wishlistCount} />

@@ -34,22 +34,23 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+import { useCartStore } from "@/hooks/use-cart";
+
 interface MobileSidebarProps {
   categories: CategoryTree[];
   brands: Brand[];
-  cartCount?: number;
   wishlistCount?: number;
 }
 
 export function MobileSidebar({
   categories,
   brands,
-  cartCount = 0,
   wishlistCount = 0,
 }: MobileSidebarProps) {
   const [open, setOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const router = useRouter();
+  const { items } = useCartStore();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -64,6 +65,10 @@ export function MobileSidebar({
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const cartCount = isMounted
+    ? items.reduce((acc, item) => acc + item.quantity, 0)
+    : 0;
 
   if (!isMounted) {
     return (

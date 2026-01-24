@@ -1,30 +1,34 @@
-"use client";
-
+// ... imports
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { CartItem, CartState } from "@/lib/types";
-import { api } from "@/lib/api-client";
 import { toast } from "sonner";
+import { syncCartAction } from "@/app/actions/cart";
+import { checkStockAction } from "@/app/actions/product";
 
 const debounce = <T extends (...args: any[]) => any>(func: T, wait: number) => {
-  let timeout: NodeJS.Timeout;
+  let timeout: any;
   return (...args: Parameters<T>) => {
+    console.log("Debounce: Queuing execution", { args });
     clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
+    timeout = setTimeout(() => {
+      console.log("Debounce: Executing function");
+      func(...args);
+    }, wait);
   };
 };
 
 type CartStore = CartState & {
   lastSyncedItems: CartItem[];
-  syncCart: (items: CartItem[]) => Promise<void>;
 };
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => {
-      const performSync = async (items: CartItem[]) => {
+      const performSync = async (items: CartItem[], userId: string) => {
+        console.log("performSync called", { itemsCount: items.length, userId });
         try {
-          const response = await api.post("/cart/sync", { items });
+          const response = await syncCartAction(items, userId);
 
           if (!response.success) {
             throw new Error(response.error || "Sync failed");
@@ -46,7 +50,7 @@ export const useCartStore = create<CartStore>()(
         lastSyncedItems: [],
         isOpen: false,
 
-        addItem: (item) => {
+        addItem: async (item, userId) => {
           const { items } = get();
           const existingItemIndex = items.findIndex(
             (i) =>
@@ -55,6 +59,25 @@ export const useCartStore = create<CartStore>()(
               i.color === item.color &&
               i.size === item.size,
           );
+
+          let newQuantity = item.quantity;
+          if (existingItemIndex > -1) {
+            newQuantity += items[existingItemIndex].quantity;
+          }
+
+          // Verify stock
+          const stockCheck = await checkStockAction(
+            item.productId,
+            item.variantId,
+            newQuantity,
+          );
+
+          if (!stockCheck.success || !stockCheck.available) {
+            toast.error(
+              stockCheck.message || "Requested quantity not available",
+            );
+            return false;
+          }
 
           let newItems = [...items];
           if (existingItemIndex > -1) {
@@ -65,10 +88,14 @@ export const useCartStore = create<CartStore>()(
 
           set({ items: newItems, isOpen: true });
 
-          debouncedSync(newItems);
+          if (userId) {
+            console.log("addItem: Triggering debouncedSync", { userId });
+            debouncedSync(newItems, userId);
+          }
+          return true;
         },
 
-        removeItem: (productId, variantId) => {
+        removeItem: (productId, userId, variantId) => {
           const { items } = get();
           const newItems = items.filter(
             (i) =>
@@ -80,14 +107,45 @@ export const useCartStore = create<CartStore>()(
 
           set({ items: newItems });
 
-          debouncedSync(newItems);
+          if (userId) {
+            debouncedSync(newItems, userId);
+          }
         },
 
-        updateQuantity: (productId, quantity, variantId) => {
+        updateQuantity: async (productId, quantity, userId, variantId) => {
           const { items } = get();
           if (quantity <= 0) {
             if (quantity === 0) {
-              get().removeItem(productId, variantId);
+              get().removeItem(productId, userId, variantId);
+              return;
+            }
+          }
+
+          // Verify stock if increasing quantity
+          const currentItem = items.find(
+            (i) =>
+              i.productId === productId &&
+              (variantId ? i.variantId === variantId : true),
+          );
+
+          if (currentItem && quantity > currentItem.quantity) {
+            try {
+              const stockCheck = await checkStockAction(
+                productId,
+                variantId,
+                quantity,
+              );
+
+              if (!stockCheck.success || !stockCheck.available) {
+                toast.error(
+                  stockCheck.message || "Requested quantity not available",
+                );
+                return;
+              }
+            } catch (error) {
+              console.error("Stock check failed:", error);
+              // Optimistically allow or block? Let's block to be safe but not crash
+              toast.error("Could not verify stock. Please try again.");
               return;
             }
           }
@@ -104,31 +162,35 @@ export const useCartStore = create<CartStore>()(
 
           set({ items: newItems });
 
-          debouncedSync(newItems);
+          if (userId) {
+            debouncedSync(newItems, userId);
+          }
         },
 
-        clearCart: () => {
+        clearCart: (userId) => {
           const newItems: CartItem[] = [];
 
           set({ items: newItems });
 
-          debouncedSync(newItems);
+          if (userId) {
+            debouncedSync(newItems, userId);
+          }
         },
 
         toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
-        syncCart: async () => {
-          performSync(get().items);
+        syncCart: async (userId: string) => {
+          performSync(get().items, userId);
         },
       };
     },
     {
       name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
-      
+
       partialize: (state) => ({
         items: state.items,
-        
+
         lastSyncedItems: state.lastSyncedItems,
       }),
     },

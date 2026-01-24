@@ -11,11 +11,13 @@ import { cn } from "@/lib/utils";
 interface ProductDetailsProps {
   product: Product;
   similarProducts: NewArrivals[];
+  userId?: string;
 }
 
 export function ProductDetails({
   product,
   similarProducts,
+  userId,
 }: ProductDetailsProps) {
   const {
     colors,
@@ -56,6 +58,7 @@ export function ProductDetails({
             isOutOfStock={isOutOfStock}
             isVariantAvailable={isVariantAvailable}
             discountPercentage={discountPercentage}
+            userId={userId}
           />
         </div>
       </div>

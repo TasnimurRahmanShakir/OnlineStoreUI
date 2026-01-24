@@ -6,19 +6,21 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { BASE_URL2 } from "@/lib/api-constants";
 
 interface CartItemProps {
   item: CartItemType;
+  userId?: string;
 }
 
-export function CartItem({ item }: CartItemProps) {
+export function CartItem({ item, userId }: CartItemProps) {
   const { updateQuantity, removeItem } = useCartStore();
 
   return (
     <div className="flex gap-4 py-4 border-b">
       <div className="relative aspect-square h-24 w-24 min-w-24 overflow-hidden rounded-md border bg-gray-100">
         <Image
-          src={item.image || "/placeholder.png"}
+          src={BASE_URL2 + item.image || "/placeholder.png"}
           alt={item.name}
           fill
           className="object-cover"
@@ -50,11 +52,13 @@ export function CartItem({ item }: CartItemProps) {
             <Button
               variant="ghost"
               size="icon"
+              type="button"
               className="h-8 w-8 rounded-none"
               onClick={() =>
                 updateQuantity(
                   item.productId,
                   item.quantity - 1,
+                  userId,
                   item.variantId,
                 )
               }
@@ -66,11 +70,13 @@ export function CartItem({ item }: CartItemProps) {
             <Button
               variant="ghost"
               size="icon"
+              type="button"
               className="h-8 w-8 rounded-none"
               onClick={() =>
                 updateQuantity(
                   item.productId,
                   item.quantity + 1,
+                  userId,
                   item.variantId,
                 )
               }
@@ -82,8 +88,9 @@ export function CartItem({ item }: CartItemProps) {
           <Button
             variant="ghost"
             size="sm"
+            type="button"
             className="text-red-500 hover:text-red-600 hover:bg-red-50"
-            onClick={() => removeItem(item.productId, item.variantId)}
+            onClick={() => removeItem(item.productId, userId, item.variantId)}
           >
             <Trash2 className="h-4 w-4 mr-2" />
             Remove

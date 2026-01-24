@@ -113,3 +113,48 @@ export async function getStoreProductsAction(params: {
 
   return result;
 }
+
+export async function checkStockAction(
+  productId: string,
+  variantId: string | undefined,
+  quantity: number,
+) {
+  try {
+    const productResult = await api.get<Product>(
+      `/Product/details/${productId}`,
+    );
+
+    if (!productResult.success || !productResult.data) {
+      return { success: false, available: false, message: "Product not found" };
+    }
+
+    const product = productResult.data;
+    let availableStock = 0;
+
+    if (variantId && product.variants) {
+      const variant = product.variants.find((v) => v.id === variantId);
+      if (variant) {
+        availableStock = variant.stockQuantity;
+      }
+    } else {
+      availableStock = product.totalStock; // Or handle non-variant products
+    }
+
+    if (quantity > availableStock) {
+      return {
+        success: true,
+        available: false,
+        message: `Only ${availableStock} items available in stock`,
+      };
+    }
+
+    return { success: true, available: true };
+  } catch (error) {
+    console.error("Check stock error:", error);
+    return {
+      success: false,
+      available: false,
+      message: "Failed to verify stock",
+    };
+  }
+}

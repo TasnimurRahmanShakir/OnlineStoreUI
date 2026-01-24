@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types";
-import { BASE_URL2 } from "@/lib/api-client";
+import { BASE_URL2 } from "@/lib/api-constants";
 
 // Extended interface to support UI-specific fields not yet in the official API
 export interface ProductCardProps {

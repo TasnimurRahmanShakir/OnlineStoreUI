@@ -29,7 +29,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import { BASE_URL2 } from "@/lib/api-client";
+import { BASE_URL2 } from "@/lib/api-constants";
 
 export const columns: ColumnDef<Product>[] = [
   {

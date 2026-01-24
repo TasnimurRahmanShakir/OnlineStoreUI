@@ -23,6 +23,7 @@ interface ProductInfoProps {
   isOutOfStock: boolean;
   isVariantAvailable: (color: string | null, size: string | null) => boolean;
   discountPercentage: number;
+  userId?: string;
 }
 
 export function ProductInfo({
@@ -36,6 +37,7 @@ export function ProductInfo({
   currentPrice,
   isOutOfStock,
   isVariantAvailable,
+  userId,
 }: ProductInfoProps) {
   const [quantity, setQuantity] = useState(1);
 
@@ -236,7 +238,7 @@ export function ProductInfo({
           className="w-full h-12 text-base font-medium shadow-md transition-transform active:scale-[0.98]"
           size="lg"
           disabled={isOutOfStock}
-          onClick={() => {
+          onClick={async () => {
             if (
               (colors.length > 0 && !selectedColor) ||
               (sizes.length > 0 && !selectedSize)
@@ -253,18 +255,24 @@ export function ProductInfo({
                 (sizes.length === 0 || v.size === selectedSize),
             );
 
-            useCartStore.getState().addItem({
-              productId: product.id,
-              variantId: variant?.id,
-              name: product.name,
-              price: currentPrice,
-              quantity: quantity,
-              image: product.images?.[0] || product.baseImage,
-              color: selectedColor || undefined,
-              size: selectedSize || undefined,
-              productSlug: product.slug,
-            });
-            toast.success("Added to cart");
+            const success = await useCartStore.getState().addItem(
+              {
+                productId: product.id,
+                variantId: variant?.id,
+                name: product.name,
+                price: currentPrice,
+                quantity: quantity,
+                image: product.images?.[0] || product.baseImage,
+                color: selectedColor || undefined,
+                size: selectedSize || undefined,
+                productSlug: product.slug,
+              },
+              userId,
+            );
+
+            if (success) {
+              toast.success("Added to cart");
+            }
           }}
         >
           <ShoppingCart className="mr-2 h-5 w-5" />

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Category } from "@/lib/types";
-import { BASE_URL2 } from "@/lib/api-client";
+import { BASE_URL2 } from "@/lib/api-constants";
 
 interface CategoryGridProps {
   categories: Category[];

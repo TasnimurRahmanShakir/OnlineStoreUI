@@ -136,16 +136,17 @@ export type CartItem = {
 export type CartState = {
   items: CartItem[];
   isOpen: boolean;
-  addItem: (item: CartItem) => void;
-  removeItem: (productId: string, variantId?: string) => void;
+  addItem: (item: CartItem, userId?: string) => Promise<boolean>;
+  removeItem: (productId: string, userId?: string, variantId?: string) => void;
   updateQuantity: (
     productId: string,
     quantity: number,
+    userId?: string,
     variantId?: string,
-  ) => void;
-  clearCart: () => void;
+  ) => Promise<void>;
+  clearCart: (userId?: string) => void;
   toggleCart: () => void;
-  syncCart: () => Promise<void>; // Explicit sync action if needed, though usually automatic
+  syncCart: (userId: string) => Promise<void>; // Explicit sync action if needed, though usually automatic
 };
 
 export type AuthResponse = {

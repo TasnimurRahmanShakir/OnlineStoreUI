@@ -1,5 +1,7 @@
-export const BASE_URL = "https://localhost:7255/api";
-export const BASE_URL2 = "https://localhost:7255";
+import { BASE_URL } from "./api-constants";
+
+import { getSession } from "./session";
+import { cookies } from "next/headers";
 
 if (process.env.NODE_ENV === "development") {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -38,6 +40,19 @@ export const apiCall = async <T = any>(
       ...headers,
     },
   };
+
+  // Check for session and add token if not already present
+  // Note: cookies() is only available in Server Components / Server Actions
+  try {
+    const session = await getSession();
+    if (session?.token) {
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${session.token}`,
+      };
+    }
+  } catch (error) {
+  }
 
   if (body instanceof FormData) {
     config.body = body;

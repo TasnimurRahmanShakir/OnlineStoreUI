@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/carousel";
 import { cn } from "@/lib/utils";
 import { Product, Variant } from "@/lib/types";
-import { BASE_URL2 } from "@/lib/api-client";
+import { BASE_URL2 } from "@/lib/api-constants";
 
 interface ProductImageGalleryProps {
   product: Product;

@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -43,6 +43,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -59,7 +60,11 @@ export default function LoginPage() {
 
       if (result.success) {
         toast.success("Logged in successfully.");
-        if (result.data?.role === "Admin") {
+        const callbackUrl = searchParams.get("callbackUrl");
+
+        if (callbackUrl) {
+          router.push(callbackUrl);
+        } else if (result.data?.role === "Admin") {
           router.push("/admin");
         } else {
           router.push("/");

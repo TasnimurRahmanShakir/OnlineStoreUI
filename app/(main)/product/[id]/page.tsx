@@ -4,6 +4,7 @@ import {
   getProductByIdAction,
   getNewArrivalsAction,
 } from "@/app/actions/product";
+import { getSession } from "@/lib/session";
 
 // Mock data fallback if API fails or returns null (for development)
 // Mock data fallback if API fails or returns null (for development)
@@ -108,12 +109,14 @@ export default async function ProductPage({ params }: PageProps) {
 
   const finalProduct = product || MOCK_PRODUCT;
 
+  const session = await getSession();
 
   return (
     <div className="bg-white min-h-screen pb-20">
       <ProductDetails
         product={finalProduct as any}
         similarProducts={similarProducts}
+        userId={session?.id}
       />
     </div>
   );

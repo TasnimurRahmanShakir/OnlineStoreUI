@@ -20,25 +20,29 @@ import { MobileSidebar } from "./mobile-sidebar";
 import { CategoryTree } from "@/lib/utils";
 import { Brand } from "@/lib/types";
 
+import { useCartStore } from "@/hooks/use-cart";
 import { logoutAction } from "@/app/actions/auth";
 import { UserSession } from "@/lib/session";
 
 interface HeaderProps {
   categories: CategoryTree[];
   brands: Brand[];
-  cartCount?: number;
-  wishlistCount?: number;
   user?: UserSession | null;
 }
 
-export function Header({
-  categories,
-  brands,
-  cartCount = 0,
-  wishlistCount = 0,
-  user,
-}: HeaderProps) {
+export function Header({ categories, brands, user }: HeaderProps) {
   const router = useRouter();
+  const { items } = useCartStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const cartCount = mounted
+    ? items.reduce((acc, item) => acc + item.quantity, 0)
+    : 0;
+  const wishlistCount = 0; // Placeholder until wishlist store is implemented
 
   /* Debounced Search Logic */
   const searchParams = useSearchParams();
@@ -110,7 +114,6 @@ export function Header({
         <MobileSidebar
           categories={categories}
           brands={brands}
-          cartCount={cartCount}
           wishlistCount={wishlistCount}
         />
 
@@ -230,14 +233,17 @@ export function Header({
             variant="ghost"
             size="icon"
             className="h-9 w-9 lg:h-10 lg:w-10 relative"
+            asChild
           >
-            <ShoppingCart className="h-5 w-5" />
-            <span className="sr-only">Cart</span>
-            {cartCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-background">
-                {cartCount}
-              </span>
-            )}
+            <Link href="/cart">
+              <ShoppingCart className="h-5 w-5" />
+              <span className="sr-only">Cart</span>
+              {cartCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground ring-2 ring-background">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
           </Button>
 
           <DropdownMenu>

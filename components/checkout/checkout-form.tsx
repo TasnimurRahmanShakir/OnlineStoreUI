@@ -17,7 +17,7 @@ import { useCartStore } from "@/hooks/use-cart";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { api } from "@/lib/api-client";
+// import { api } from "@/lib/api-client";
 
 const checkoutSchema = z.object({
   firstName: z.string().min(2, "First name is required"),

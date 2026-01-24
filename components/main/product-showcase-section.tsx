@@ -8,7 +8,7 @@ import { Autoplay, Navigation } from "swiper/modules";
 import { ProductCard, ProductCardProps } from "@/components/main/product-card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BASE_URL2 } from "@/lib/api-client";
+import { BASE_URL2 } from "@/lib/api-constants";
 
 // Import Swiper styles
 import "swiper/css";
