@@ -173,3 +173,42 @@ export type Address = {
   label: "Home" | "Office";
   isDefault: boolean;
 };
+
+export type OrderSummary = {
+  id: string;
+  orderNumber: string;
+  date: string;
+  customerName: string;
+  total: number;
+  status: string;
+};
+
+export type OrderItem = {
+  productId: string;
+  variantId?: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  subTotal: number;
+  image?: string;
+  color?: string;
+  size?: string;
+};
+
+export type OrderDetails = {
+  id: string;
+  orderNumber: string;
+  orderDate: string;
+  orderStatus: string;
+  totalAmount: number;
+
+  // Customer Info
+  customerName: string;
+  customerEmail: string;
+
+  // Shipping Info
+  shippingAddress: string;
+  shippingLabel: string;
+
+  items: OrderItem[];
+};

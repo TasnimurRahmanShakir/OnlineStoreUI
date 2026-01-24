@@ -1,7 +1,5 @@
-"use client";
-
 import Link from "next/link";
-import { Eye } from "lucide-react";
+import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,13 +10,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import { getAllOrdersAction } from "@/app/actions/order";
+import { OrderSummary, PaginatedResult } from "@/lib/types";
 
-const orders = [
-  { id: "ORD-001", date: "2023-10-01", customer: "John Doe", total: 120.50, status: "Pending" },
-  { id: "ORD-002", date: "2023-10-02", customer: "Jane Smith", total: 450.00, status: "Shipped" },
-];
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: { page?: string };
+}) {
+  const currentPage = Number(searchParams.page) || 1;
+  const limit = 10;
 
-export default function OrdersPage() {
+  const response = await getAllOrdersAction(currentPage, limit);
+
+  if (!response.success || !response.data) {
+    return (
+      <div className="p-6">
+        <h2 className="text-3xl font-bold tracking-tight mb-4">Orders</h2>
+        <div className="rounded-md border p-6 text-center text-red-500">
+          Failed to load orders. {response.error}
+        </div>
+      </div>
+    );
+  }
+
+  const data = response.data;
+
+  
   return (
     <div className="space-y-6">
       <h2 className="text-3xl font-bold tracking-tight">Orders</h2>
@@ -35,26 +53,83 @@ export default function OrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell className="font-medium">{order.id}</TableCell>
-                <TableCell>{order.date}</TableCell>
-                <TableCell>{order.customer}</TableCell>
-                <TableCell>${order.total.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Badge variant="outline">{order.status}</Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link href={`/orders/${order.id}`}>
-                      <Eye className="mr-2 h-4 w-4" /> View
-                    </Link>
-                  </Button>
+            {data.items && data.items.length > 0 ? (
+              data.items.map((order) => (
+                <TableRow key={order.id}>
+                  <TableCell className="font-medium">
+                    {order.orderNumber}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(order.date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>{order.customerName}</TableCell>
+                  <TableCell>${order.total.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{order.status}</Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href={`/admin/orders/${order.id}`}>
+                        <Eye className="mr-2 h-4 w-4" /> View
+                      </Link>
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={6} className="h-24 text-center">
+                  No orders found.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          Page {data.currentPage} of {data.totalPages}
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!data.hasPreviousPage}
+            asChild={data.hasPreviousPage}
+          >
+            {data.hasPreviousPage ? (
+              <Link href={`/admin/orders?page=${data.currentPage - 1}`}>
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Link>
+            ) : (
+              <>
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </>
+            )}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!data.hasNextPage}
+            asChild={data.hasNextPage}
+          >
+            {data.hasNextPage ? (
+              <Link href={`/admin/orders?page=${data.currentPage + 1}`}>
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                Next
+                <ChevronRight className="h-4 w-4" />
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
