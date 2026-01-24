@@ -8,6 +8,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
+import { ComingSoonModal } from "@/components/coming-soon-modal";
 import {
   Menu,
   Search,
@@ -242,29 +243,31 @@ export function MobileSidebar({
             <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
               Account
             </h4>
-            <Link
-              href="/profile"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium hover:bg-muted transition-colors"
-            >
-              <User className="h-5 w-5 text-muted-foreground" />
-              Profile
-            </Link>
-            <Link
-              href="/wishlist"
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium hover:bg-muted transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <Heart className="h-5 w-5 text-muted-foreground" />
-                Wishlist
+            <ComingSoonModal title="User Profile">
+              <div
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium hover:bg-muted transition-colors cursor-pointer"
+              >
+                <User className="h-5 w-5 text-muted-foreground" />
+                Profile
               </div>
-              {wishlistCount > 0 && (
-                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
-                  {wishlistCount}
-                </span>
-              )}
-            </Link>
+            </ComingSoonModal>
+            <ComingSoonModal title="Wishlist">
+              <div
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-base font-medium hover:bg-muted transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-3">
+                  <Heart className="h-5 w-5 text-muted-foreground" />
+                  Wishlist
+                </div>
+                {wishlistCount > 0 && (
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+                    {wishlistCount}
+                  </span>
+                )}
+              </div>
+            </ComingSoonModal>
             <Link
               href="/cart"
               onClick={() => setOpen(false)}

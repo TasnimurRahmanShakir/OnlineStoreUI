@@ -16,6 +16,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
+import { ComingSoonModal } from "@/components/coming-soon-modal";
 import { MobileSidebar } from "./mobile-sidebar";
 import { CategoryTree } from "@/lib/utils";
 import { Brand } from "@/lib/types";
@@ -215,19 +216,21 @@ export function Header({ categories, brands, user }: HeaderProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 md:gap-4 ml-auto">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="hidden md:flex h-9 w-9 lg:h-10 lg:w-10 relative"
-          >
-            <Heart className="h-5 w-5" />
-            <span className="sr-only">Wishlist</span>
-            {wishlistCount > 0 && (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">
-                {wishlistCount}
-              </span>
-            )}
-          </Button>
+          <ComingSoonModal title="Wishlist">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:flex h-9 w-9 lg:h-10 lg:w-10 relative"
+            >
+              <Heart className="h-5 w-5" />
+              <span className="sr-only">Wishlist</span>
+              {wishlistCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">
+                  {wishlistCount}
+                </span>
+              )}
+            </Button>
+          </ComingSoonModal>
 
           <Button
             variant="ghost"
@@ -268,11 +271,14 @@ export function Header({ categories, brands, user }: HeaderProps) {
                       </p>
                     </div>
                   </div>
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/profile" className="w-full font-medium">
-                      Profile
-                    </Link>
-                  </DropdownMenuItem>
+                  <ComingSoonModal title="User Profile">
+                    <DropdownMenuItem
+                      onSelect={(e) => e.preventDefault()}
+                      className="cursor-pointer"
+                    >
+                      <span className="w-full font-medium">Profile</span>
+                    </DropdownMenuItem>
+                  </ComingSoonModal>
                   <DropdownMenuItem
                     className="cursor-pointer text-red-600 focus:text-red-600"
                     onClick={() => logoutAction()}
