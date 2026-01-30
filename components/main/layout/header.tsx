@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Search, ShoppingCart, Heart, User, ChevronDown } from "lucide-react";
@@ -120,9 +121,7 @@ export function Header({ categories, brands, user }: HeaderProps) {
 
         {/* Logo */}
         <Link href="/" className="mr-4 flex items-center space-x-2 md:mr-8">
-          <span className="text-xl md:text-2xl font-bold tracking-tight">
-            Store
-          </span>
+          <Image src="/logo.png" alt="Logo" width={250} height={150} />
         </Link>
 
         {/* Desktop Navigation */}

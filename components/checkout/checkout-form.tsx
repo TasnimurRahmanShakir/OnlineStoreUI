@@ -30,9 +30,11 @@ import { createOrderAction } from "@/app/actions/order";
 
 const checkoutSchema = z.object({
   fullName: z.string().min(2, "Full name is required"),
-  email: z.string().email("Invalid email address"),
+  email: z.string().email("Invalid email address").optional().or(z.literal("")),
   phone: z.string().min(10, "Phone number is required"),
-  addressLine: z.string().min(5, "Address is required"),
+  recipientAddress: z.string().min(5, "Recipient address is required"),
+  thana: z.string().min(2, "Thana is required"),
+  district: z.string().min(2, "District is required"),
   label: z.enum(["Home", "Office"]),
   isDefault: z.boolean(),
 });
@@ -55,17 +57,32 @@ interface CheckoutFormProps {
   } | null;
 }
 
-export function CheckoutForm({
-  userProfile,
-}: CheckoutFormProps) {
+export function CheckoutForm({ userProfile }: CheckoutFormProps) {
   const router = useRouter();
   const { clearCart, items } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  console.log(userProfile);
   // Find default address or first address
-  const defaultAddress =
-    userProfile?.addresses?.find((addr) => addr.isDefault) || userProfile?.addresses?.[0];
+  const defaultAddressObj =
+    userProfile?.addresses?.find((addr) => addr.isDefault) ||
+    userProfile?.addresses?.[0];
+
+  const rawAddress =
+    defaultAddressObj?.addressLine || userProfile?.addressLine || "";
+
+  const addressParts = rawAddress.split(",").map((s) => s.trim());
+
+  let defaultRecipient = "";
+  let defaultThana = "";
+  let defaultDistrict = "";
+
+  if (addressParts.length >= 3) {
+    defaultDistrict = addressParts.pop() || "";
+    defaultThana = addressParts.pop() || "";
+    defaultRecipient = addressParts.join(", ");
+  } else {
+    defaultRecipient = rawAddress;
+  }
 
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
@@ -73,21 +90,26 @@ export function CheckoutForm({
       fullName: userProfile?.fullName || "",
       email: userProfile?.email || "",
       phone: userProfile?.phoneNumber || "",
-      addressLine: defaultAddress?.addressLine || "",
-      label: defaultAddress?.label || "Home",
-      isDefault: defaultAddress?.isDefault ?? false,
+      recipientAddress: defaultRecipient,
+      thana: defaultThana,
+      district: defaultDistrict,
+      label: defaultAddressObj?.label || "Home",
+      isDefault: defaultAddressObj?.isDefault ?? false,
     },
   });
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);
     try {
+      // Merge address fields
+      const finalAddress = `${data.recipientAddress}, ${data.thana}, ${data.district}`;
+
       const orderData = {
         ...data,
         FullName: data.fullName,
         Email: data.email,
         PhoneNumber: data.phone,
-        Address: data.addressLine,
+        Address: finalAddress,
         items: items.map((item) => ({
           productId: item.productId,
           variantId: item.variantId,
@@ -122,7 +144,7 @@ export function CheckoutForm({
             name="fullName"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Full Name</FormLabel>
+                <FormLabel>Full Name (আপনার নাম)</FormLabel>
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
@@ -161,12 +183,42 @@ export function CheckoutForm({
 
           <FormField
             control={form.control}
-            name="addressLine"
+            name="district"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>District (জেলা)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Dhaka" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="thana"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Thana (থানা)</FormLabel>
+                <FormControl>
+                  <Input placeholder="Gulshan" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="recipientAddress"
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
-                <FormLabel>Address Line</FormLabel>
+                <FormLabel>
+                  Recipient's Address (পণ্য গ্রহণের সম্পূর্ণ ঠিকানা)
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="123 Main St" {...field} />
+                  <Input placeholder="House 12, Road 5" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -178,7 +230,7 @@ export function CheckoutForm({
             name="label"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Label</FormLabel>
+                <FormLabel>Label (বাসা নাকি অফিস )</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

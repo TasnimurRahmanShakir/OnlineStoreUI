@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 
@@ -39,6 +40,7 @@ export function ProductInfo({
   isVariantAvailable,
   userId,
 }: ProductInfoProps) {
+  const router = useRouter();
   const [quantity, setQuantity] = useState(1);
 
   const handleQuantityChange = (delta: number) => {
@@ -277,6 +279,50 @@ export function ProductInfo({
         >
           <ShoppingCart className="mr-2 h-5 w-5" />
           {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+        </Button>
+
+        {/* Order Now */}
+        <Button
+          className="w-full h-12 text-base font-medium shadow-md transition-transform active:scale-[0.98]"
+          variant="secondary"
+          size="lg"
+          disabled={isOutOfStock}
+          onClick={async () => {
+            if (
+              (colors.length > 0 && !selectedColor) ||
+              (sizes.length > 0 && !selectedSize)
+            ) {
+              toast.error("Please select options");
+              return;
+            }
+
+            const variant = product.variants.find(
+              (v) =>
+                (colors.length === 0 || v.color === selectedColor) &&
+                (sizes.length === 0 || v.size === selectedSize),
+            );
+
+            const success = await useCartStore.getState().addItem(
+              {
+                productId: product.id,
+                variantId: variant?.id,
+                name: product.name,
+                price: currentPrice,
+                quantity: quantity,
+                image: product.images?.[0] || product.baseImage,
+                color: selectedColor || undefined,
+                size: selectedSize || undefined,
+                productSlug: product.slug,
+              },
+              userId,
+            );
+
+            if (success) {
+              router.push("/checkout");
+            }
+          }}
+        >
+          Order Now
         </Button>
       </div>
 

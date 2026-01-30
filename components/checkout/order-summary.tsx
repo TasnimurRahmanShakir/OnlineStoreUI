@@ -34,7 +34,7 @@ export function OrderSummary() {
                 <Image
                   src={BASE_URL2 + item.image || "/placeholder.png"}
                   alt={item.name}
-                  fill 
+                  fill
                   className="object-cover"
                 />
               </div>
@@ -62,13 +62,13 @@ export function OrderSummary() {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600">Shipping</div>
+          <div className="text-sm text-gray-600">Shipping (ডেলিভারি চার্জ )</div>
           <div className="text-sm font-medium text-gray-900">
             {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
           </div>
         </div>
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-          <div className="text-base font-medium text-gray-900">Order total</div>
+          <div className="text-base font-medium text-gray-900">Order total (মোট বিক্রি মূল্য)</div>
           <div className="text-base font-medium text-gray-900">
             ${total.toFixed(2)}
           </div>

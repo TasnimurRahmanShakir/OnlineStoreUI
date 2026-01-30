@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   Facebook,
   Instagram,
@@ -21,9 +22,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand & Newsletter */}
           <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-white tracking-tight">
-              StoreName.
-            </h3>
+            <Image src="/logo1.png" alt="Logo" width={250} height={150} />
             <p className="text-gray-400 text-sm leading-relaxed">
               Premium quality products for your lifestyle. We curate the best
               items to enhance your everyday experience.
@@ -136,7 +135,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 text-gray-500 shrink-0" />
-                <span>support@storename.com</span>
+                <span>support@kimzonestore.com</span>
               </li>
             </ul>
 
@@ -174,7 +173,7 @@ export function Footer() {
 
         {/* Bottom Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center bg-gray-900 border-t border-gray-800 pt-8 gap-4 text-sm text-gray-500">
-          <p>© {currentYear} StoreName. All rights reserved.</p>
+          <p>© {currentYear} Kim Zone Store. All rights reserved.</p>
           <div className="flex items-center gap-1">
             <span>Developed by</span>
             <Link

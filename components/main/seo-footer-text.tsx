@@ -8,8 +8,8 @@ export function SeoFooterText() {
               Your One-Stop Tech Shop
             </h2>
             <p>
-              Welcome to NextStore, your premier destination for the latest in
-              consumer electronics and tech accessories. Whether you're a
+              Welcome to Kim Zone Store, your premier destination for the latest
+              in consumer electronics and tech accessories. Whether you're a
               professional photographer looking for high-end camera gear, a
               gamer seeking the ultimate setup, or simply looking to upgrade
               your daily driver smartphone, we have something for everyone. Our
@@ -26,8 +26,8 @@ export function SeoFooterText() {
               We verify every product to ensure it meets our strict quality
               standards. With fast shipping, easy returns, and a knowledgeable
               support team, shopping for tech has never been easier or more
-              reliable. Join thousands of satisfied customers who trust
-              NextStore for their technology needs.
+              reliable. Join thousands of satisfied customers who trust Kim Zone
+              Store for their technology needs.
             </p>
           </div>
 

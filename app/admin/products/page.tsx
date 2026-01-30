@@ -5,8 +5,8 @@ import { DataTable } from "@/components/ui/data-table"; // Import the engine
 import { columns } from "./columns"; // Import the config
 import { Product, PaginatedResult } from "@/lib/types";
 import { api } from "@/lib/api-client";
+import { AdminSearch } from "@/components/admin/admin-search";
 
-// 1. Helper function to fetch data server-side
 // 1. Helper function to fetch data server-side
 async function getProducts(
   page: number,
@@ -44,25 +44,53 @@ async function getProducts(
 }
 
 export default async function ProductsPage(props: {
-  searchParams: Promise<{ page?: string; limit?: string }>;
+  searchParams: Promise<{ page?: string; limit?: string; q?: string }>;
 }) {
   const searchParams = await props.searchParams;
   const page = Number(searchParams.page) || 1;
   const limit = Number(searchParams.limit) || 10;
+  const q = searchParams.q;
 
-  // 2. Fetch data (server-side pagination)
-  const paginatedResult = await getProducts(page, limit);
-  const products = paginatedResult.items || []; // Ensure items is an array
+  let products: Product[] = [];
+  let paginatedResult: any = {
+    hasNextPage: false,
+    hasPreviousPage: false,
+    totalPages: 1,
+  };
+
+  if (q) {
+    const result = await api.get(`/Search/products?q=${q}`);
+    if (result.success) {
+      products = result.data.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        brand: p.brand,
+        priceSummary: `$${p.price?.toFixed(2) || "0.00"}`,
+        totalStock: p.stockQuantity || 0,
+        categoryName: p.categoryName,
+        baseImage: p.image || null,
+        isActive: p.isActive,
+        description: p.description,
+        createdAt: new Date(), // Search doesn't return date yet
+      }));
+    }
+  } else {
+    paginatedResult = await getProducts(page, limit);
+    products = paginatedResult.items || [];
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-3xl font-bold tracking-tight">Products</h2>
-        <Button asChild>
-          <Link href="/admin/products/new">
-            <Plus className="mr-2 h-4 w-4" /> Add Product
-          </Link>
-        </Button>
+        <div className="flex items-center gap-4">
+          <AdminSearch placeholder="Search products..." />
+          <Button asChild>
+            <Link href="/admin/products/new">
+              <Plus className="mr-2 h-4 w-4" /> Add Product
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* 3. Render the DataTable with paginated data */}
@@ -70,51 +98,55 @@ export default async function ProductsPage(props: {
 
       {/* Pagination Controls */}
       <div className="flex items-center justify-end space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={!paginatedResult.hasPreviousPage}
-          asChild={!!paginatedResult.hasPreviousPage}
-        >
-          {paginatedResult.hasPreviousPage ? (
-            <Link
-              href={`/admin/products?page=${page - 1}&limit=${limit}`}
-              className="flex items-center"
+        {!q && (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!paginatedResult.hasPreviousPage}
+              asChild={!!paginatedResult.hasPreviousPage}
             >
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Previous
-            </Link>
-          ) : (
-            <span className="flex items-center">
-              <ChevronLeft className="h-4 w-4 mr-2" />
-              Previous
-            </span>
-          )}
-        </Button>
-        <div className="text-sm font-medium">
-          Page {page} of {paginatedResult.totalPages || 1}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={!paginatedResult.hasNextPage}
-          asChild={!!paginatedResult.hasNextPage}
-        >
-          {paginatedResult.hasNextPage ? (
-            <Link
-              href={`/admin/products?page=${page + 1}&limit=${limit}`}
-              className="flex items-center"
+              {paginatedResult.hasPreviousPage ? (
+                <Link
+                  href={`/admin/products?page=${page - 1}&limit=${limit}`}
+                  className="flex items-center"
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Previous
+                </Link>
+              ) : (
+                <span className="flex items-center">
+                  <ChevronLeft className="h-4 w-4 mr-2" />
+                  Previous
+                </span>
+              )}
+            </Button>
+            <div className="text-sm font-medium">
+              Page {page} of {paginatedResult.totalPages || 1}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={!paginatedResult.hasNextPage}
+              asChild={!!paginatedResult.hasNextPage}
             >
-              Next
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Link>
-          ) : (
-            <span className="flex items-center">
-              Next
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </span>
-          )}
-        </Button>
+              {paginatedResult.hasNextPage ? (
+                <Link
+                  href={`/admin/products?page=${page + 1}&limit=${limit}`}
+                  className="flex items-center"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </Link>
+              ) : (
+                <span className="flex items-center">
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-2" />
+                </span>
+              )}
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

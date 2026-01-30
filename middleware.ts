@@ -6,7 +6,7 @@ if (process.env.NODE_ENV === "development") {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
-const protectedRoutes = ["/profile", "/cart", "/admin"];
+const protectedRoutes = ["/profile", "/admin"];
 const authRoutes = ["/login", "/signup"];
 
 export async function middleware(request: NextRequest) {

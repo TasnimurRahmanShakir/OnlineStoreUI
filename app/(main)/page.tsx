@@ -143,19 +143,19 @@ export default async function MainPage() {
       <PromotionalBanner />
 
       {/* 6. Validate */}
-      <ProductShowcaseSection
+      {/* <ProductShowcaseSection
         title="Best Sellers"
         products={popularProducts}
         viewAllLink="/store?sort=popular"
-      />
+      /> */}
 
       {/* 7. Upsell */}
-      <ProductShowcaseSection
+      {/* <ProductShowcaseSection
         title="Trending Now"
         products={trendingProducts}
         viewAllLink="/store?sort=trending"
         className="bg-gray-50/50"
-      />
+      /> */}
 
       {/* 8. Inform */}
       <SeoFooterText />
