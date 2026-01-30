@@ -237,8 +237,8 @@ export function StoreFilters({ categories, brands }: StoreFiltersProps) {
                       {brand.name}
                     </Label>
                   </div>
-                  <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
-                    0
+                  <span className="ml-auto text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
+                    {brand.productCount || 0}
                   </span>
                 </div>
               ))}

@@ -29,6 +29,7 @@ export type Category = {
 export type Brand = {
   id: string;
   name: string;
+  productCount?: number;
 };
 
 export type Variant = {
