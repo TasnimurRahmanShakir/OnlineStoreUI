@@ -127,7 +127,7 @@ export function StoreFilters({ categories, brands }: StoreFiltersProps) {
                     {category.name}
                   </span>
                   <span className="ml-auto text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
-                    0
+                    {category.productCount || 0}
                   </span>
                 </div>
               </AccordionTrigger>
@@ -163,7 +163,7 @@ export function StoreFilters({ categories, brands }: StoreFiltersProps) {
             >
               <span>{category.name}</span>
               <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full font-medium">
-                0
+                {category.productCount || 0}
               </span>
             </Label>
           </div>

@@ -23,6 +23,7 @@ export type Category = {
   parentName?: string | null;
   parentId?: string;
   createdAt?: string;
+  productCount?: number;
 };
 
 export type Brand = {
