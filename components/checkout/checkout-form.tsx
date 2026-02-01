@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input";
 import { useCartStore } from "@/hooks/use-cart";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -59,7 +59,7 @@ interface CheckoutFormProps {
 
 export function CheckoutForm({ userProfile }: CheckoutFormProps) {
   const router = useRouter();
-  const { clearCart, items } = useCartStore();
+  const { clearCart, items, setShippingCost } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Find default address or first address
@@ -97,6 +97,16 @@ export function CheckoutForm({ userProfile }: CheckoutFormProps) {
       isDefault: defaultAddressObj?.isDefault ?? false,
     },
   });
+
+  const district = form.watch("district");
+
+  useEffect(() => {
+    if (district && district.toLowerCase().includes("dhaka")) {
+      setShippingCost(70);
+    } else {
+      setShippingCost(120);
+    }
+  }, [district, setShippingCost]);
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);

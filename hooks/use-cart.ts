@@ -20,6 +20,8 @@ const debounce = <T extends (...args: any[]) => any>(func: T, wait: number) => {
 
 type CartStore = CartState & {
   lastSyncedItems: CartItem[];
+  shippingCost: number;
+  setShippingCost: (cost: number) => void;
 };
 
 export const useCartStore = create<CartStore>()(
@@ -178,6 +180,9 @@ export const useCartStore = create<CartStore>()(
         },
 
         toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
+
+        shippingCost: 120, // Default to outside Dhaka
+        setShippingCost: (cost: number) => set({ shippingCost: cost }),
 
         syncCart: async (userId: string) => {
           performSync(get().items, userId);

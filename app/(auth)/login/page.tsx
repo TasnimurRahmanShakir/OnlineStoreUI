@@ -64,7 +64,10 @@ export default function LoginPage() {
 
         if (callbackUrl) {
           router.push(callbackUrl);
-        } else if (result.data?.role === "Admin") {
+        } else if (
+          result.data?.role === "Admin" ||
+          result.data?.role === "Super Admin"
+        ) {
           router.push("/admin");
         } else {
           router.push("/");

@@ -23,6 +23,7 @@ import {
   Package,
   User,
 } from "lucide-react";
+import { OrderActions } from "@/components/admin/order-actions";
 
 export default async function OrderDetailsPage({
   params,
@@ -136,9 +137,12 @@ export default async function OrderDetailsPage({
           </div>
         </div>
         <div className="flex gap-2">
-          {/* Placeholder actions */}
-          <Button variant="outline">Invoice</Button>
-          <Button>Track Order</Button>
+          <OrderActions
+            orderId={order.id}
+            currentStatus={order.orderStatus}
+            canEdit={order.canEdit}
+            assignedAdminName={order.assignedAdminName}
+          />
         </div>
       </div>
 
@@ -209,11 +213,15 @@ export default async function OrderDetailsPage({
               <div className="w-full space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>{formatCurrency(order.totalAmount)}</span>
+                  <span>
+                    {formatCurrency(
+                      order.totalAmount - (order.shippingFee || 0),
+                    )}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>Free</span>
+                  <span>{formatCurrency(order.shippingFee || 0)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Tax</span>

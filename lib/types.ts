@@ -183,6 +183,8 @@ export type OrderSummary = {
   customerName: string;
   total: number;
   status: string;
+  canEdit?: boolean;
+  assignedAdminName?: string;
 };
 
 export type OrderItem = {
@@ -203,6 +205,7 @@ export type OrderDetails = {
   orderDate: string;
   orderStatus: string;
   totalAmount: number;
+  shippingFee: number;
 
   // Customer Info
   customerName: string;
@@ -211,6 +214,10 @@ export type OrderDetails = {
   // Shipping Info
   shippingAddress: string;
   shippingLabel: string;
+
+  assignedAdminId?: string;
+  assignedAdminName?: string;
+  canEdit?: boolean;
 
   items: OrderItem[];
 };

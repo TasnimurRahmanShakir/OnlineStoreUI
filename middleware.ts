@@ -17,7 +17,10 @@ export async function middleware(request: NextRequest) {
   let user = token ? await verifyToken(token) : null;
 
   if (user && authRoutes.includes(pathname)) {
-    if ((user as any).role === "Admin") {
+    if (
+      (user as any).role === "Admin" ||
+      (user as any).role === "Super Admin"
+    ) {
       return NextResponse.redirect(new URL("/admin", request.url));
     }
     return NextResponse.redirect(new URL("/", request.url));
@@ -91,7 +94,11 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(loginUrl);
     }
 
-    if (isAdminRoute && (user as any).role !== "Admin") {
+    if (
+      isAdminRoute &&
+      (user as any).role !== "Admin" &&
+      (user as any).role !== "Super Admin"
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }

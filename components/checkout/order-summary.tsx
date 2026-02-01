@@ -6,14 +6,14 @@ import Image from "next/image";
 import { BASE_URL2 } from "@/lib/api-constants";
 
 export function OrderSummary() {
-  const { items } = useCartStore();
+  const { items, shippingCost } = useCartStore();
 
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
     0,
   );
 
-  const shipping: number = 0; // Free shipping for now
+  const shipping = shippingCost;
   const total = subtotal + shipping;
 
   return (
@@ -62,13 +62,17 @@ export function OrderSummary() {
           </div>
         </div>
         <div className="flex items-center justify-between">
-          <div className="text-sm text-gray-600">Shipping (ডেলিভারি চার্জ )</div>
+          <div className="text-sm text-gray-600">
+            Shipping (ডেলিভারি চার্জ )
+          </div>
           <div className="text-sm font-medium text-gray-900">
             {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
           </div>
         </div>
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-          <div className="text-base font-medium text-gray-900">Order total (মোট বিক্রি মূল্য)</div>
+          <div className="text-base font-medium text-gray-900">
+            Order total (মোট বিক্রি মূল্য)
+          </div>
           <div className="text-base font-medium text-gray-900">
             ${total.toFixed(2)}
           </div>

@@ -97,6 +97,8 @@ export default async function OrdersPage({
                     <OrderActions
                       orderId={order.id}
                       currentStatus={order.status}
+                      canEdit={order.canEdit}
+                      assignedAdminName={order.assignedAdminName}
                     />
                   </TableCell>
                 </TableRow>

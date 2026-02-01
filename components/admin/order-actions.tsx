@@ -42,12 +42,21 @@ import {
 } from "@/app/actions/order";
 import { toast } from "sonner";
 
+import { Lock } from "lucide-react";
+
 interface OrderActionsProps {
   orderId: string;
   currentStatus: string;
+  canEdit?: boolean;
+  assignedAdminName?: string;
 }
 
-export function OrderActions({ orderId, currentStatus }: OrderActionsProps) {
+export function OrderActions({
+  orderId,
+  currentStatus,
+  canEdit = true, // Default to true if not provided (backward compatibility)
+  assignedAdminName,
+}: OrderActionsProps) {
   const [loading, setLoading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
@@ -102,11 +111,27 @@ export function OrderActions({ orderId, currentStatus }: OrderActionsProps) {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
-            <MoreHorizontal className="h-4 w-4" />
+            {canEdit ? (
+              <MoreHorizontal className="h-4 w-4" />
+            ) : (
+              <Lock className="h-4 w-4 text-muted-foreground" />
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>
+            Actions
+            {!canEdit && assignedAdminName && (
+              <span className="block text-xs font-normal text-muted-foreground mt-1">
+                Locked by {assignedAdminName}
+              </span>
+            )}
+            {!canEdit && !assignedAdminName && (
+              <span className="block text-xs font-normal text-muted-foreground mt-1">
+                Locked (Cancelled or Restricted)
+              </span>
+            )}
+          </DropdownMenuLabel>
           <DropdownMenuItem asChild>
             <Link href={`/admin/orders/${orderId}`}>
               <Eye className="mr-2 h-4 w-4" />
@@ -114,8 +139,9 @@ export function OrderActions({ orderId, currentStatus }: OrderActionsProps) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
+
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger disabled={!canEdit}>
               <Package className="mr-2 h-4 w-4" />
               Change Status
             </DropdownMenuSubTrigger>
@@ -128,6 +154,10 @@ export function OrderActions({ orderId, currentStatus }: OrderActionsProps) {
                   <DropdownMenuRadioItem
                     key={status.value}
                     value={status.value}
+                    disabled={
+                      status.value === "Cancelled" &&
+                      currentStatus === "Cancelled"
+                    }
                   >
                     <status.icon className="mr-2 h-4 w-4" />
                     {status.label}
@@ -136,10 +166,12 @@ export function OrderActions({ orderId, currentStatus }: OrderActionsProps) {
               </DropdownMenuRadioGroup>
             </DropdownMenuSubContent>
           </DropdownMenuSub>
+
           <DropdownMenuSeparator />
           <DropdownMenuItem
             className="text-red-600 focus:text-red-600"
             onClick={() => setDeleteOpen(true)}
+            disabled={!canEdit} // Assuming if strictly locked, also can't delete here. Or backend handles it.
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Order
