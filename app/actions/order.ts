@@ -23,6 +23,11 @@ export async function getOrderByIdAction(id: string) {
   return result;
 }
 
+export async function getMyOrdersAction() {
+  const result = await api.get<OrderSummary[]>("/Order/my-orders");
+  return result;
+}
+
 export async function updateOrderStatusAction(id: string, status: string) {
   console.log("updateOrderStatusAction called", { id, status });
   const result = await api.patch(`/Order/${id}/status`, { Status: status });

@@ -133,66 +133,99 @@ export function Header({ categories, brands, user }: HeaderProps) {
             Home
           </Link>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60 outline-none">
-              Store <ChevronDown className="h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[220px]">
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/store" className="w-full">
-                  All Products
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60 outline-none">
-              Categories <ChevronDown className="h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[220px]">
-              {categories.map((category) => renderCategory(category))}
-              {categories.length > 10 && (
+          {/* Store Dropdown */}
+          {mounted ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60 outline-none">
+                Store <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[220px]">
                 <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link
-                    href="/store"
-                    className="font-semibold text-primary w-full"
-                  >
-                    View All Categories
+                  <Link href="/store" className="w-full">
+                    All Products
                   </Link>
                 </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              href="/store"
+              className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60"
+            >
+              Store
+            </Link>
+          )}
 
-          <DropdownMenu>
-            <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60 outline-none">
-              Brands <ChevronDown className="h-4 w-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[220px]">
-              {brands.slice(0, 10).map((brand) => (
-                <DropdownMenuItem
-                  key={brand.id}
-                  asChild
-                  className="cursor-pointer"
-                >
-                  <Link href={`/store?brand=${brand.name}`} className="w-full">
-                    {brand.name}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-              {brands.length > 10 && (
-                <DropdownMenuItem asChild className="cursor-pointer">
-                  <Link
-                    href="/store"
-                    className="font-semibold text-primary w-full"
+          {/* Categories Dropdown */}
+          {mounted ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60 outline-none">
+                Categories <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[220px]">
+                {categories.map((category) => renderCategory(category))}
+                {categories.length > 10 && (
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link
+                      href="/store"
+                      className="font-semibold text-primary w-full"
+                    >
+                      View All Categories
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              href="/store"
+              className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60"
+            >
+              Categories
+            </Link>
+          )}
+
+          {/* Brands Dropdown */}
+          {mounted ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60 outline-none">
+                Brands <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-[220px]">
+                {brands.slice(0, 10).map((brand) => (
+                  <DropdownMenuItem
+                    key={brand.id}
+                    asChild
+                    className="cursor-pointer"
                   >
-                    View All Brands
-                  </Link>
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                    <Link
+                      href={`/store?brand=${brand.name}`}
+                      className="w-full"
+                    >
+                      {brand.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+                {brands.length > 10 && (
+                  <DropdownMenuItem asChild className="cursor-pointer">
+                    <Link
+                      href="/store"
+                      className="font-semibold text-primary w-full"
+                    >
+                      View All Brands
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link
+              href="/store"
+              className="flex items-center gap-1 transition-colors hover:text-primary text-foreground/60"
+            >
+              Brands
+            </Link>
+          )}
         </nav>
 
         {/* Search Bar - Desktop */}
@@ -215,7 +248,23 @@ export function Header({ categories, brands, user }: HeaderProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 md:gap-4 ml-auto">
-          <ComingSoonModal title="Wishlist">
+          {mounted ? (
+            <ComingSoonModal title="Wishlist">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hidden md:flex h-9 w-9 lg:h-10 lg:w-10 relative"
+              >
+                <Heart className="h-5 w-5" />
+                <span className="sr-only">Wishlist</span>
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Button>
+            </ComingSoonModal>
+          ) : (
             <Button
               variant="ghost"
               size="icon"
@@ -223,13 +272,8 @@ export function Header({ categories, brands, user }: HeaderProps) {
             >
               <Heart className="h-5 w-5" />
               <span className="sr-only">Wishlist</span>
-              {wishlistCount > 0 && (
-                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">
-                  {wishlistCount}
-                </span>
-              )}
             </Button>
-          </ComingSoonModal>
+          )}
 
           <Button
             variant="ghost"
@@ -248,8 +292,62 @@ export function Header({ categories, brands, user }: HeaderProps) {
             </Link>
           </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          {mounted ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9 lg:h-10 lg:w-10 rounded-full border border-transparent hover:border-border"
+                >
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">User Account</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {user ? (
+                  <>
+                    <div className="flex items-center justify-start gap-2 p-2">
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium">{user.fullName}</p>
+                        <p className="w-[200px] truncate text-sm text-muted-foreground">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                    <ComingSoonModal title="User Profile">
+                      <DropdownMenuItem
+                        onSelect={(e) => e.preventDefault()}
+                        className="cursor-pointer"
+                      >
+                        <span className="w-full font-medium">Profile</span>
+                      </DropdownMenuItem>
+                    </ComingSoonModal>
+                    <DropdownMenuItem
+                      className="cursor-pointer text-red-600 focus:text-red-600"
+                      onClick={() => logoutAction()}
+                    >
+                      Logout
+                    </DropdownMenuItem>
+                  </>
+                ) : (
+                  <>
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link href="/login" className="w-full font-medium">
+                        Login
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="cursor-pointer">
+                      <Link href="/register" className="w-full">
+                        Register
+                      </Link>
+                    </DropdownMenuItem>
+                  </>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href={user ? "/profile" : "/login"}>
               <Button
                 variant="ghost"
                 size="icon"
@@ -258,49 +356,8 @@ export function Header({ categories, brands, user }: HeaderProps) {
                 <User className="h-5 w-5" />
                 <span className="sr-only">User Account</span>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              {user ? (
-                <>
-                  <div className="flex items-center justify-start gap-2 p-2">
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium">{user.fullName}</p>
-                      <p className="w-[200px] truncate text-sm text-muted-foreground">
-                        {user.email}
-                      </p>
-                    </div>
-                  </div>
-                  <ComingSoonModal title="User Profile">
-                    <DropdownMenuItem
-                      onSelect={(e) => e.preventDefault()}
-                      className="cursor-pointer"
-                    >
-                      <span className="w-full font-medium">Profile</span>
-                    </DropdownMenuItem>
-                  </ComingSoonModal>
-                  <DropdownMenuItem
-                    className="cursor-pointer text-red-600 focus:text-red-600"
-                    onClick={() => logoutAction()}
-                  >
-                    Logout
-                  </DropdownMenuItem>
-                </>
-              ) : (
-                <>
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/login" className="w-full font-medium">
-                      Login
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link href="/register" className="w-full">
-                      Register
-                    </Link>
-                  </DropdownMenuItem>
-                </>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </Link>
+          )}
         </div>
       </div>
     </header>
