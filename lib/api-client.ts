@@ -48,7 +48,7 @@ export const apiCall = async <T = any>(
         Authorization: `Bearer ${session.token}`,
       };
     }
-  } catch (error) {}
+  } catch (error) { }
 
   if (body instanceof FormData) {
     config.body = body;
@@ -65,6 +65,7 @@ export const apiCall = async <T = any>(
 
   try {
     const response = await fetch(url, config);
+    console.log("response", response);
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = "Unable to fetch data";
@@ -81,6 +82,7 @@ export const apiCall = async <T = any>(
         const text = await response.text();
         if (text) {
           if (text.trim().startsWith("<") || text.includes("<!DOCTYPE html>")) {
+            console.log(text);
             errorMessage = "A server error occurred.";
           } else {
             errorMessage = text;
