@@ -94,11 +94,7 @@ function LoginForm() {
       </CardHeader>
       <CardContent className="grid gap-4">
         <div className="grid grid-cols-1 gap-6">
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => console.log("Google Login")}
-          >
+          <Button variant="outline" type="button" onClick={() => {}}>
             <svg role="img" viewBox="0 0 24 24" className="mr-2 h-4 w-4">
               <path
                 fill="currentColor"

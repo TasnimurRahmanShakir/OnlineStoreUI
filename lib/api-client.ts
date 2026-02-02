@@ -64,12 +64,7 @@ export const apiCall = async <T = any>(
   }
 
   try {
-    console.log("url: " + url);
-    console.log("config: " + JSON.stringify(config));
-    console.log("body: " + JSON.stringify(body));
     const response = await fetch(url, config);
-
-    console.log("fetch response status:", response.status, response.statusText);
     if (!response.ok) {
       const contentType = response.headers.get("content-type");
       let errorMessage = "Unable to fetch data";
