@@ -2,10 +2,6 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken, isTokenExpiring } from "@/lib/auth-edge";
 
-if (process.env.NODE_ENV === "development") {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-}
-
 const protectedRoutes = ["/profile", "/admin"];
 const authRoutes = ["/login", "/signup"];
 
