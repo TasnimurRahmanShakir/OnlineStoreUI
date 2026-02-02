@@ -5,7 +5,7 @@ import { verifyToken, isTokenExpiring } from "@/lib/auth-edge";
 const protectedRoutes = ["/profile", "/admin"];
 const authRoutes = ["/login", "/signup"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const token = request.cookies.get("session_token")?.value;
