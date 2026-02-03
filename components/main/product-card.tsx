@@ -36,16 +36,13 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
     (product.originalPrice && product.originalPrice > (product.salePrice || 0));
 
   return (
-    <div
+    <Link
+      href={`/product/${product.id}`}
       className={cn(
-        "group relative bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300",
+        "group relative bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 block cursor-pointer",
         className,
       )}
     >
-      <Link href={`/product/${product.id}`} className="absolute inset-0 z-0">
-        <span className="sr-only">View Product</span>
-      </Link>
-
       {/* Badges */}
       <div className="absolute top-3 left-3 z-10 flex flex-col gap-2 pointer-events-none">
         {badges.map((badge) => (
@@ -79,20 +76,30 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
         />
 
         {/* Overlay Actions */}
-        <div className="absolute inset-0 z-10 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 pointer-events-none">
+        <div className="absolute inset-0 z-10 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
           <Button
             size="icon"
             variant="secondary"
-            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300 pointer-events-auto"
+            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-red-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300"
             title="Add to Wishlist"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // TODO: Add wishlist functionality
+            }}
           >
             <Heart className="h-5 w-5" />
           </Button>
           <Button
             size="icon"
             variant="secondary"
-            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-blue-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75 pointer-events-auto"
+            className="rounded-full w-10 h-10 bg-white/90 hover:bg-white text-gray-700 hover:text-blue-500 translate-y-4 group-hover:translate-y-0 transition-all duration-300 delay-75"
             title="Quick View"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              // TODO: Add quick view functionality
+            }}
           >
             <Eye className="h-5 w-5" />
           </Button>
@@ -107,7 +114,7 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
         </p>
 
         {/* Title */}
-        <h3 className="font-bold text-gray-900 leading-tight line-clamp-2 min-h-10 group-hover:text-primary transition-colors relative z-0">
+        <h3 className="font-bold text-gray-900 leading-tight line-clamp-2 min-h-10 group-hover:text-primary transition-colors">
           {product.name}
         </h3>
 
@@ -143,6 +150,6 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
             )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
