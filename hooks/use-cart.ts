@@ -52,7 +52,7 @@ export const useCartStore = create<CartStore>()(
         lastSyncedItems: [],
         isOpen: false,
 
-        addItem: async (item, userId) => {
+        addItem: async (item, userId?) => {
           const { items } = get();
           const existingItemIndex = items.findIndex(
             (i) =>
@@ -97,7 +97,7 @@ export const useCartStore = create<CartStore>()(
           return true;
         },
 
-        removeItem: (productId, userId, variantId) => {
+        removeItem: (productId, userId?, variantId?) => {
           const { items } = get();
           const newItems = items.filter(
             (i) =>
@@ -114,7 +114,7 @@ export const useCartStore = create<CartStore>()(
           }
         },
 
-        updateQuantity: async (productId, quantity, userId, variantId) => {
+        updateQuantity: async (productId, quantity, userId?, variantId?) => {
           const { items } = get();
           if (quantity <= 0) {
             if (quantity === 0) {
@@ -169,7 +169,7 @@ export const useCartStore = create<CartStore>()(
           }
         },
 
-        clearCart: (userId) => {
+        clearCart: (userId?) => {
           const newItems: CartItem[] = [];
 
           set({ items: newItems });

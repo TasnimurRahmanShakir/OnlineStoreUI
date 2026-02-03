@@ -43,6 +43,7 @@ type CheckoutFormValues = z.infer<typeof checkoutSchema>;
 
 interface CheckoutFormProps {
   userProfile?: {
+    id?: string;
     fullName: string;
     email: string;
     phoneNumber?: string;
@@ -133,7 +134,7 @@ export function CheckoutForm({ userProfile }: CheckoutFormProps) {
 
       if (result.success) {
         toast.success("Order placed successfully!");
-        clearCart();
+        clearCart(userProfile?.id); // Pass userId if available (undefined for guests)
         router.push("/");
       } else {
         toast.error(result.error || "Something went wrong. Please try again.");

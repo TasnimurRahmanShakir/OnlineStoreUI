@@ -58,7 +58,7 @@ export function CartItem({ item, userId }: CartItemProps) {
                 updateQuantity(
                   item.productId,
                   item.quantity - 1,
-                  userId,
+                  userId, // Can be undefined for guests
                   item.variantId,
                 )
               }
@@ -76,7 +76,7 @@ export function CartItem({ item, userId }: CartItemProps) {
                 updateQuantity(
                   item.productId,
                   item.quantity + 1,
-                  userId,
+                  userId, // Can be undefined for guests
                   item.variantId,
                 )
               }
@@ -90,7 +90,7 @@ export function CartItem({ item, userId }: CartItemProps) {
             size="sm"
             type="button"
             className="text-red-500 hover:text-red-600 hover:bg-red-50"
-            onClick={() => removeItem(item.productId, userId, item.variantId)}
+            onClick={() => removeItem(item.productId, userId, item.variantId)} // Can be undefined for guests
           >
             <Trash2 className="h-4 w-4 mr-2" />
             Remove
