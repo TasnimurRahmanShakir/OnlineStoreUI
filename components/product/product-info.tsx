@@ -235,10 +235,54 @@ export function ProductInfo({
           </Button>
         </div>
 
+        {/* Order Now */}
+        <Button
+          className="w-full h-12 text-base font-medium shadow-md transition-transform active:scale-[0.98] bg-orange-600 hover:bg-orange-700 text-white"
+          size="lg"
+          disabled={isOutOfStock}
+          onClick={async () => {
+            if (
+              (colors.length > 0 && !selectedColor) ||
+              (sizes.length > 0 && !selectedSize)
+            ) {
+              toast.error("Please select options");
+              return;
+            }
+
+            const variant = product.variants.find(
+              (v) =>
+                (colors.length === 0 || v.color === selectedColor) &&
+                (sizes.length === 0 || v.size === selectedSize),
+            );
+
+            const success = await useCartStore.getState().addItem(
+              {
+                productId: product.id,
+                variantId: variant?.id,
+                name: product.name,
+                price: currentPrice,
+                quantity: quantity,
+                image: product.images?.[0] || product.baseImage,
+                color: selectedColor || undefined,
+                size: selectedSize || undefined,
+                productSlug: product.slug,
+              },
+              userId,
+            );
+
+            if (success) {
+              router.push("/checkout");
+            }
+          }}
+        >
+          Order Now
+        </Button>
+
         {/* Add to Cart */}
         <Button
           className="w-full h-12 text-base font-medium shadow-md transition-transform active:scale-[0.98]"
           size="lg"
+          variant="outline"
           disabled={isOutOfStock}
           onClick={async () => {
             if (
@@ -279,50 +323,6 @@ export function ProductInfo({
         >
           <ShoppingCart className="mr-2 h-5 w-5" />
           {isOutOfStock ? "Out of Stock" : "Add to Cart"}
-        </Button>
-
-        {/* Order Now */}
-        <Button
-          className="w-full h-12 text-base font-medium shadow-md transition-transform active:scale-[0.98]"
-          variant="secondary"
-          size="lg"
-          disabled={isOutOfStock}
-          onClick={async () => {
-            if (
-              (colors.length > 0 && !selectedColor) ||
-              (sizes.length > 0 && !selectedSize)
-            ) {
-              toast.error("Please select options");
-              return;
-            }
-
-            const variant = product.variants.find(
-              (v) =>
-                (colors.length === 0 || v.color === selectedColor) &&
-                (sizes.length === 0 || v.size === selectedSize),
-            );
-
-            const success = await useCartStore.getState().addItem(
-              {
-                productId: product.id,
-                variantId: variant?.id,
-                name: product.name,
-                price: currentPrice,
-                quantity: quantity,
-                image: product.images?.[0] || product.baseImage,
-                color: selectedColor || undefined,
-                size: selectedSize || undefined,
-                productSlug: product.slug,
-              },
-              userId,
-            );
-
-            if (success) {
-              router.push("/checkout");
-            }
-          }}
-        >
-          Order Now
         </Button>
       </div>
 

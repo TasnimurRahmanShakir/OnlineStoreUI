@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "localhost",
       },
+      {
+        protocol: "https",
+        hostname: "api.kimzone.bd",
+      },
     ],
   },
 };
