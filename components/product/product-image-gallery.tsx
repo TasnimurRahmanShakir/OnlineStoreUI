@@ -11,9 +11,9 @@ import {
   CarouselPrevious,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import { cn } from "@/lib/utils";
+import { cn, constructImageUrl } from "@/lib/utils";
 import { Product, Variant } from "@/lib/types";
-import { BASE_URL2 } from "@/lib/api-constants";
+// BASE_URL2 import removed
 
 interface ProductImageGalleryProps {
   product: Product;
@@ -29,6 +29,11 @@ export function ProductImageGallery({
   const plugin = React.useRef(
     Autoplay({ delay: 5000, stopOnInteraction: true, stopOnMouseEnter: true }),
   );
+
+  // DEBUG: Print product data to console
+  console.log("ProductImageGallery - Product:", product);
+  console.log("ProductImageGallery - BaseImage:", product.baseImage);
+  console.log("ProductImageGallery - Images:", product.images);
 
   const images = React.useMemo(() => {
     if (!product.images || product.images.length === 0) {
@@ -76,8 +81,7 @@ export function ProductImageGallery({
   };
 
   const getImageUrl = (url: string) => {
-    if (url.startsWith("http")) return url;
-    return `${BASE_URL2}${url}`;
+    return constructImageUrl(url);
   };
 
   return (

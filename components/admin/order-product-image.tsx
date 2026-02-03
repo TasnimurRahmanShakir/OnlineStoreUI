@@ -9,6 +9,7 @@ import {
 import { Package } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { constructImageUrl } from "@/lib/utils";
 
 interface OrderProductImageProps {
   src: string;
@@ -17,13 +18,14 @@ interface OrderProductImageProps {
 
 export function OrderProductImage({ src, alt }: OrderProductImageProps) {
   const [open, setOpen] = useState(false);
+  const imageUrl = constructImageUrl(src); // Ensure consistent URL
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="relative w-full h-full overflow-hidden rounded-md cursor-pointer group">
           <img
-            src={src}
+            src={imageUrl}
             alt={alt}
             className="h-full w-full object-cover transition-transform group-hover:scale-105"
           />
@@ -36,7 +38,7 @@ export function OrderProductImage({ src, alt }: OrderProductImageProps) {
           <DialogTitle className="sr-only">{alt}</DialogTitle>
           <div className="relative w-full h-full pointer-events-auto">
             <Image
-              src={src}
+              src={imageUrl}
               alt={alt}
               fill
               className="object-contain"

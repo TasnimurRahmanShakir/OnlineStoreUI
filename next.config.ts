@@ -8,11 +8,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "localhost",
+        hostname: "**",
       },
       {
-        protocol: "https",
-        hostname: "api.kimzone.bd",
+        protocol: "http",
+        hostname: "**",
       },
     ],
   },

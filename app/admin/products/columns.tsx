@@ -29,7 +29,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
-import { BASE_URL2 } from "@/lib/api-constants";
+import { constructImageUrl } from "@/lib/utils";
+// BASE_URL2 import removed
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -41,7 +42,7 @@ export const columns: ColumnDef<Product>[] = [
         <div className="relative h-10 w-10 overflow-hidden rounded-md bg-gray-100">
           {baseImage ? (
             <Image
-              src={BASE_URL2 + baseImage}
+              src={constructImageUrl(baseImage)}
               alt={row.getValue("name")}
               fill
               sizes="40px"
@@ -61,8 +62,17 @@ export const columns: ColumnDef<Product>[] = [
     header: "Brand",
   },
   {
-    accessorKey: "priceSummary",
+    accessorKey: "salePrice",
     header: "Price",
+    cell: ({ row }) => {
+      const price = parseFloat(row.getValue("salePrice"));
+      const formatted = new Intl.NumberFormat("en-BD", {
+        style: "currency",
+        currency: "BDT",
+      }).format(price);
+
+      return <div>{formatted}</div>;
+    },
   },
   {
     accessorKey: "totalStock",

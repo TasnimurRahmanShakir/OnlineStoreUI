@@ -6,7 +6,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { BASE_URL2 } from "@/lib/api-constants";
+import { constructImageUrl } from "@/lib/utils";
 
 interface CartItemProps {
   item: CartItemType;
@@ -20,7 +20,7 @@ export function CartItem({ item, userId }: CartItemProps) {
     <div className="flex gap-4 py-4 border-b">
       <div className="relative aspect-square h-24 w-24 min-w-24 overflow-hidden rounded-md border bg-gray-100">
         <Image
-          src={BASE_URL2 + item.image || "/placeholder.png"}
+          src={constructImageUrl(item.image) || "/placeholder.png"}
           alt={item.name}
           fill
           className="object-cover"

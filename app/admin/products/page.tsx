@@ -66,6 +66,7 @@ export default async function ProductsPage(props: {
         name: p.name,
         brand: p.brand,
         priceSummary: `$${p.price?.toFixed(2) || "0.00"}`,
+        salePrice: p.price || 0,
         totalStock: p.stockQuantity || 0,
         categoryName: p.categoryName,
         baseImage: p.image || null,

@@ -3,7 +3,7 @@
 import { useCartStore } from "@/hooks/use-cart";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
-import { BASE_URL2 } from "@/lib/api-constants";
+import { constructImageUrl } from "@/lib/utils";
 
 export function OrderSummary() {
   const { items, shippingCost } = useCartStore();
@@ -32,7 +32,7 @@ export function OrderSummary() {
             >
               <div className="relative h-20 w-20 flex-none rounded-md border border-gray-200 bg-white overflow-hidden">
                 <Image
-                  src={BASE_URL2 + item.image || "/placeholder.png"}
+                  src={constructImageUrl(item.image) || "/placeholder.png"}
                   alt={item.name}
                   fill
                   className="object-cover"

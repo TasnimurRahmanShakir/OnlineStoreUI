@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Heart, Eye, ShoppingCart, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, constructImageUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Product } from "@/lib/types";
-import { BASE_URL2 } from "@/lib/api-constants";
+// BASE_URL2 import no longer needed
 
 // Extended interface to support UI-specific fields not yet in the official API
 export interface ProductCardProps {
@@ -68,9 +68,7 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
       <div className="relative aspect-[3/4] w-full bg-gray-50 overflow-hidden">
         <Image
           src={
-            (product.baseImage?.startsWith("http")
-              ? product.baseImage
-              : BASE_URL2 + product.baseImage) ||
+            constructImageUrl(product.baseImage) ||
             "https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1999&auto=format&fit=crop"
           }
           alt={product.name}

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getOrderByIdAction } from "@/app/actions/order";
-import { BASE_URL2 } from "@/lib/api-constants";
 import { OrderProductImage } from "@/components/admin/order-product-image";
 import { OrderDetails } from "@/lib/types";
 import {
@@ -166,7 +165,7 @@ export default async function OrderDetailsPage({
                     <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
                       {item.image ? (
                         <OrderProductImage
-                          src={BASE_URL2 + item.image}
+                          src={item.image}
                           alt={item.productName}
                         />
                       ) : (
