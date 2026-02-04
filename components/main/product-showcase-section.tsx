@@ -29,7 +29,7 @@ export function ProductShowcaseSection({
 }: ProductShowcaseSectionProps) {
   return (
     <section className={cn("py-12 relative min-h-[400px]", className)}>
-      <div className="container px-4 md:px-6">
+      <div className="container mx-auto px-4 md:px-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-gray-900">
