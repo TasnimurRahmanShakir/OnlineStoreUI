@@ -43,7 +43,7 @@ export function CartItem({ item, userId }: CartItemProps) {
             {item.size && <span className="uppercase">{item.size}</span>}
           </div>
           <div className="text-sm font-semibold mt-1">
-            ${item.price.toFixed(2)}
+            ৳{item.price.toFixed(2)}
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">

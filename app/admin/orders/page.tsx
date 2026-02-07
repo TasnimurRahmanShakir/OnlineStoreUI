@@ -89,7 +89,7 @@ export default async function OrdersPage({
                       : "N/A"}
                   </TableCell>
                   <TableCell>{order.customerName}</TableCell>
-                  <TableCell>${order.total?.toFixed(2) ?? "0.00"}</TableCell>
+                  <TableCell>৳{order.total?.toFixed(2) ?? "0.00"}</TableCell>
                   <TableCell>
                     <Badge variant="outline">{order.status}</Badge>
                   </TableCell>

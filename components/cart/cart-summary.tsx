@@ -21,7 +21,7 @@ export function CartSummary() {
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600">Subtotal</div>
           <div className="text-sm font-medium text-gray-900">
-            ${subtotal.toFixed(2)}
+            ৳{subtotal.toFixed(2)}
           </div>
         </div>
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
@@ -29,7 +29,7 @@ export function CartSummary() {
             Order total
           </div>
           <div className="text-base font-medium text-gray-900">
-            ${subtotal.toFixed(2)}
+            ৳{subtotal.toFixed(2)}
           </div>
         </div>
       </div>

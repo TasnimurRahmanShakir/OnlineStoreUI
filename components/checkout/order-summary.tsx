@@ -49,7 +49,7 @@ export function OrderSummary() {
                 <p className="text-gray-500">Qty {item.quantity}</p>
               </div>
               <div className="flex-none text-base font-medium text-gray-900">
-                ${(item.price * item.quantity).toFixed(2)}
+                ৳{(item.price * item.quantity).toFixed(2)}
               </div>
             </li>
           ))}
@@ -58,7 +58,7 @@ export function OrderSummary() {
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600">Subtotal</div>
           <div className="text-sm font-medium text-gray-900">
-            ${subtotal.toFixed(2)}
+            ৳{subtotal.toFixed(2)}
           </div>
         </div>
         <div className="flex items-center justify-between">
@@ -66,7 +66,7 @@ export function OrderSummary() {
             Shipping (ডেলিভারি চার্জ )
           </div>
           <div className="text-sm font-medium text-gray-900">
-            {shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}
+            {shipping === 0 ? "Free" : `৳${shipping.toFixed(2)}`}
           </div>
         </div>
         <div className="flex items-center justify-between border-t border-gray-200 pt-4">
@@ -74,7 +74,7 @@ export function OrderSummary() {
             Order total (মোট বিক্রি মূল্য)
           </div>
           <div className="text-base font-medium text-gray-900">
-            ${total.toFixed(2)}
+            ৳{total.toFixed(2)}
           </div>
         </div>
       </div>

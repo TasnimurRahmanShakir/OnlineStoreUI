@@ -139,13 +139,13 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
         <div className="pt-2 flex items-center gap-2">
           <span className="text-lg font-bold text-primary">
             {product.salePrice
-              ? `BDT. ${product.salePrice.toFixed(2)}`
+              ? `৳${product.salePrice.toFixed(2)}`
               : priceDisplay}
           </span>
           {product.originalPrice &&
             product.originalPrice > (product.salePrice || 0) && (
               <span className="text-sm text-muted-foreground line-through decoration-gray-400">
-                BDT. {product.originalPrice.toFixed(2)}
+                ৳{product.originalPrice.toFixed(2)}
               </span>
             )}
         </div>
