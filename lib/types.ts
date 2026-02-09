@@ -95,6 +95,10 @@ export type Product = {
   priceSummary?: string;
   soldCount?: number;
   badges?: string[];
+
+  // Delivery Charges
+  deliveryChargeInsideDhaka?: number;
+  deliveryChargeOutsideDhaka?: number;
 };
 
 export const categorySchema = z.object({
@@ -133,6 +137,8 @@ export type CartItem = {
   color?: string;
   size?: string;
   productSlug: string; // helpful for linking back
+  deliveryChargeInsideDhaka?: number;
+  deliveryChargeOutsideDhaka?: number;
 };
 
 export type CartState = {

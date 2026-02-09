@@ -60,7 +60,7 @@ interface CheckoutFormProps {
 
 export function CheckoutForm({ userProfile }: CheckoutFormProps) {
   const router = useRouter();
-  const { clearCart, items, setShippingCost } = useCartStore();
+  const { clearCart, items, shippingCost, setShippingCost } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Find default address or first address
@@ -102,12 +102,27 @@ export function CheckoutForm({ userProfile }: CheckoutFormProps) {
   const district = form.watch("district");
 
   useEffect(() => {
-    if (district && district.toLowerCase().includes("dhaka")) {
-      setShippingCost(70);
-    } else {
-      setShippingCost(120);
+    // Calculate delivery charge based on products in cart
+    // Using Option A: Highest delivery charge among all products
+    let calculatedShipping = 0;
+
+    if (items.length > 0) {
+      const isInsideDhaka =
+        district && district.toLowerCase().includes("dhaka");
+
+      // Find the highest delivery charge among all products
+      const maxCharge = items.reduce((max, item) => {
+        const charge = isInsideDhaka
+          ? item.deliveryChargeInsideDhaka || 0
+          : item.deliveryChargeOutsideDhaka || 0;
+        return Math.max(max, charge);
+      }, 0);
+
+      calculatedShipping = maxCharge;
     }
-  }, [district, setShippingCost]);
+
+    setShippingCost(calculatedShipping);
+  }, [district, items, setShippingCost]);
 
   async function onSubmit(data: CheckoutFormValues) {
     setIsSubmitting(true);
@@ -121,6 +136,7 @@ export function CheckoutForm({ userProfile }: CheckoutFormProps) {
         Email: data.email,
         PhoneNumber: data.phone,
         Address: finalAddress,
+        ShippingFee: shippingCost, // Send calculated delivery charge
         items: items.map((item) => ({
           productId: item.productId,
           variantId: item.variantId,

@@ -266,6 +266,8 @@ export function ProductInfo({
                 color: selectedColor || undefined,
                 size: selectedSize || undefined,
                 productSlug: product.slug,
+                deliveryChargeInsideDhaka: product.deliveryChargeInsideDhaka,
+                deliveryChargeOutsideDhaka: product.deliveryChargeOutsideDhaka,
               },
               userId,
             );
@@ -312,6 +314,8 @@ export function ProductInfo({
                 color: selectedColor || undefined,
                 size: selectedSize || undefined,
                 productSlug: product.slug,
+                deliveryChargeInsideDhaka: product.deliveryChargeInsideDhaka,
+                deliveryChargeOutsideDhaka: product.deliveryChargeOutsideDhaka,
               },
               userId,
             );

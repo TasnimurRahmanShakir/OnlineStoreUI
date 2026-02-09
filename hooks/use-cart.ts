@@ -181,7 +181,7 @@ export const useCartStore = create<CartStore>()(
 
         toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
 
-        shippingCost: 120, // Default to outside Dhaka
+        shippingCost: 0, // Will be calculated based on district and products
         setShippingCost: (cost: number) => set({ shippingCost: cost }),
 
         syncCart: async (userId: string) => {
@@ -195,7 +195,7 @@ export const useCartStore = create<CartStore>()(
 
       partialize: (state) => ({
         items: state.items,
-
+        shippingCost: state.shippingCost,
         lastSyncedItems: state.lastSyncedItems,
       }),
     },

@@ -62,6 +62,14 @@ const productSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
   price: z.coerce.number().min(0, "Price must be positive"),
   discount: z.string().optional(),
+  deliveryChargeInsideDhaka: z.coerce
+    .number()
+    .min(0, "Delivery charge must be positive or zero")
+    .default(0),
+  deliveryChargeOutsideDhaka: z.coerce
+    .number()
+    .min(0, "Delivery charge must be positive or zero")
+    .default(0),
   isActive: z.boolean().default(true),
   baseImage: z.any().optional(),
   variants: z.array(variantSchema),
@@ -88,6 +96,9 @@ export default function ProductForm({
           categoryId: initialData.categoryId || "",
           price: initialData.price || 0,
           discount: initialData.discount || "",
+          deliveryChargeInsideDhaka: initialData.deliveryChargeInsideDhaka || 0,
+          deliveryChargeOutsideDhaka:
+            initialData.deliveryChargeOutsideDhaka || 0,
           isActive: initialData.isActive ?? true,
           baseImage: undefined, // Files can't be set programmatically easily
           variants:
@@ -103,6 +114,8 @@ export default function ProductForm({
           categoryId: "",
           price: 0,
           discount: "",
+          deliveryChargeInsideDhaka: 0,
+          deliveryChargeOutsideDhaka: 0,
           isActive: true, // Default to true for new products?
           baseImage: undefined,
           variants: [
@@ -195,6 +208,14 @@ export default function ProductForm({
     formData.append("description", values.description || "");
     formData.append("isActive", String(values.isActive));
     formData.append("price", values.price.toString());
+    formData.append(
+      "deliveryChargeInsideDhaka",
+      values.deliveryChargeInsideDhaka.toString(),
+    );
+    formData.append(
+      "deliveryChargeOutsideDhaka",
+      values.deliveryChargeOutsideDhaka.toString(),
+    );
     if (values.discount) {
       formData.append("discount", values.discount);
     }
@@ -330,6 +351,35 @@ export default function ProductForm({
                     <FormLabel>Discount</FormLabel>
                     <FormControl>
                       <Input placeholder="e.g. 10 or 10%" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="deliveryChargeInsideDhaka"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Delivery Charge (Inside Dhaka)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g. 60" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="deliveryChargeOutsideDhaka"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Delivery Charge (Outside Dhaka)</FormLabel>
+                    <FormControl>
+                      <Input type="number" placeholder="e.g. 100" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

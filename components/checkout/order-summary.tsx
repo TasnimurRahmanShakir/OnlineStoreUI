@@ -7,6 +7,8 @@ import { constructImageUrl } from "@/lib/utils";
 
 export function OrderSummary() {
   const { items, shippingCost } = useCartStore();
+  console.log("items", items);
+  console.log("shippingCost", shippingCost);
 
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
