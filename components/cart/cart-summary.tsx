@@ -2,11 +2,11 @@
 
 import { useCartStore } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export function CartSummary() {
   const { items } = useCartStore();
+  const router = useRouter();
 
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -35,8 +35,16 @@ export function CartSummary() {
       </div>
 
       <div className="mt-6">
-        <Button className="w-full" asChild>
-          <Link href="/checkout">Checkout</Link>
+        <Button 
+          className="w-full"
+          onClick={() => {
+            if (typeof window !== "undefined" && window.fbq) {
+              window.fbq('track', 'InitiateCheckout');
+            }
+            router.push("/checkout");
+          }}
+        >
+          Checkout
         </Button>
       </div>
     </div>

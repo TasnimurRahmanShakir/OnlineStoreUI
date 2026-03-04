@@ -149,13 +149,19 @@ export function CheckoutForm({ userProfile }: CheckoutFormProps) {
       const result = await createOrderAction(orderData);
 
       if (result.success) {
+        if (typeof window !== "undefined" && window.fbq) {
+          window.fbq('track', 'Purchase', {
+            currency: 'BDT',
+            value: orderData.total,
+          });
+        }
         toast.success("Order placed successfully!");
         clearCart(userProfile?.id); // Pass userId if available (undefined for guests)
         router.push("/");
       } else {
         toast.error(result.error || "Something went wrong. Please try again.");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -242,7 +248,7 @@ export function CheckoutForm({ userProfile }: CheckoutFormProps) {
             render={({ field }) => (
               <FormItem className="sm:col-span-2">
                 <FormLabel>
-                  Recipient's Address (পণ্য গ্রহণের সম্পূর্ণ ঠিকানা)
+                  Recipient&apos;s Address (পণ্য গ্রহণের সম্পূর্ণ ঠিকানা)
                 </FormLabel>
                 <FormControl>
                   <Input placeholder="House 12, Road 5" {...field} />

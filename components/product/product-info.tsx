@@ -273,6 +273,9 @@ export function ProductInfo({
             );
 
             if (success) {
+              if (typeof window !== "undefined" && window.fbq) {
+                window.fbq('track', 'InitiateCheckout');
+              }
               router.push("/checkout");
             }
           }}
@@ -321,6 +324,14 @@ export function ProductInfo({
             );
 
             if (success) {
+              if (typeof window !== "undefined" && window.fbq) {
+                window.fbq('track', 'AddToCart', {
+                  content_ids: [product.id],
+                  content_name: product.name,
+                  currency: 'BDT',
+                  value: currentPrice,
+                });
+              }
               toast.success("Added to cart");
             }
           }}

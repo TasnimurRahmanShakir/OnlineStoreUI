@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+
 import { useVariantSelector } from "@/hooks/use-variant-selector";
 import { Product, NewArrivals } from "@/lib/types";
 import { ProductImageGallery } from "@/components/product/product-image-gallery";
@@ -32,6 +34,17 @@ export function ProductDetails({
     isVariantAvailable,
     discountPercentage,
   } = useVariantSelector({ product });
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.fbq) {
+      window.fbq('track', 'ViewContent', {
+        content_ids: [product.id],
+        content_name: product.name,
+        currency: 'BDT',
+        value: currentPrice,
+      });
+    }
+  }, [product.id, product.name, currentPrice]);
 
   return (
     <div className="container w-full max-w-7xl mx-auto overflow-x-hidden px-4 py-6 md:px-6 md:py-12">

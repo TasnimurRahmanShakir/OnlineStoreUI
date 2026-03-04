@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import FacebookPixel from "@/components/FacebookPixel";
 export const metadata: Metadata = {
   title: "E-Commerce website",
   description: "Shop the latest products online",
@@ -15,6 +16,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning>
+        <FacebookPixel />
         {children}
         <Toaster richColors />
       </body>
