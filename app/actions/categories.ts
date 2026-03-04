@@ -14,7 +14,7 @@ export interface CategoryOption {
   name: string;
 }
 
-import { getSession } from "@/lib/session";
+
 
 // Backend returns the PaginatedResult directly
 export async function getCategoriesAction(
@@ -82,6 +82,7 @@ export async function getAllCategoriesAction(isPaged: boolean = false) {
     ? { params: { page: 1, limit: 10 } }
     : { params: { page: 1, limit: 1000 } };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const result = await api.get<any>("/Category", config);
 
   if (result.success && result.data) {

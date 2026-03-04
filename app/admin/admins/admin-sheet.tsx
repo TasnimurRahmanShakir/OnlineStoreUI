@@ -27,6 +27,7 @@ type AdminFormData = {
 interface AdminSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   adminToEdit?: any | null; // If null, create mode
 }
 
@@ -37,7 +38,7 @@ export function AdminSheet({ isOpen, onClose, adminToEdit }: AdminSheetProps) {
     reset,
     setValue,
     watch,
-    formState: { errors },
+    formState: {},
   } = useForm<AdminFormData>({
     defaultValues: {
       isActive: true,
@@ -93,7 +94,7 @@ export function AdminSheet({ isOpen, onClose, adminToEdit }: AdminSheetProps) {
       } else {
         toast.error(res.error || "Action failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     }
   };

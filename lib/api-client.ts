@@ -7,14 +7,14 @@ if (process.env.NODE_ENV === "development") {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
 
-export const apiCall = async <T = any>(
+export const apiCall = async <T = unknown>(
   endpoint: string,
   {
     method = "GET",
     body,
     headers = {},
     params,
-  }: { method?: string; body?: any; headers?: any; params?: any } = {},
+  }: { method?: string; body?: unknown; headers?: Record<string, string>; params?: Record<string, unknown> } = {},
 ) => {
   let url = `${BASE_URL}${endpoint}`;
 
@@ -109,25 +109,25 @@ export const apiCall = async <T = any>(
     const data = await response.json();
     console.log("🟢 Response Data:", data);
     return { success: true, data: data as T };
-  } catch (error: any) {
-    console.error("API Call Failed:", error.message);
-    return { success: false, error: error.message };
+  } catch (error: unknown) {
+    console.error("API Call Failed:", (error as Error).message);
+    return { success: false, error: (error as Error).message };
   }
 };
 
 export const api = {
-  get: <T = any>(endpoint: string, options = {}) =>
+  get: <T = unknown>(endpoint: string, options = {}) =>
     apiCall<T>(endpoint, { method: "GET", ...options }),
 
-  post: <T = any>(endpoint: string, body: any, options = {}) =>
+  post: <T = unknown>(endpoint: string, body: unknown, options = {}) =>
     apiCall<T>(endpoint, { method: "POST", body, ...options }),
 
-  put: <T = any>(endpoint: string, body: any, options = {}) =>
+  put: <T = unknown>(endpoint: string, body: unknown, options = {}) =>
     apiCall<T>(endpoint, { method: "PUT", body, ...options }),
 
-  del: <T = any>(endpoint: string, options = {}) =>
+  del: <T = unknown>(endpoint: string, options = {}) =>
     apiCall<T>(endpoint, { method: "DELETE", ...options }),
 
-  patch: <T = any>(endpoint: string, body: any, options = {}) =>
+  patch: <T = unknown>(endpoint: string, body: unknown, options = {}) =>
     apiCall<T>(endpoint, { method: "PATCH", body, ...options }),
 };

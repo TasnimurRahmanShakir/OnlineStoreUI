@@ -7,6 +7,7 @@ export async function getUserProfileAction() {
   try {
     const result = await api.get<UserProfile>("/User/profile");
     if (result.success && result.data) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const data: any = result.data;
       return {
         id: data.id,
@@ -26,7 +27,7 @@ export async function getUserProfileAction() {
       };
     }
     return null;
-  } catch (error) {
+  } catch {
     // Guest user - no authentication, return null
     return null;
   }

@@ -24,6 +24,7 @@ export default async function OrdersPage({
   const currentPage = Number(page) || 1;
   const limit = 10;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let data: any = {
     items: [],
     totalPages: 0,
@@ -36,7 +37,8 @@ export default async function OrdersPage({
     const result = await api.get(`/Search/orders?q=${q}`);
     if (result.success) {
       data = {
-        items: result.data.map((i: any) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        items: (result.data as any).map((i: any) => ({
           id: i.id,
           orderNumber: i.orderNumber,
           date: new Date(), // Search DTO doesn't have date yet, simplistic view
@@ -78,6 +80,7 @@ export default async function OrdersPage({
           </TableHeader>
           <TableBody>
             {data.items && data.items.length > 0 ? (
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               data.items.map((order: any) => (
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">

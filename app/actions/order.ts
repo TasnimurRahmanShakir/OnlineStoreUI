@@ -6,7 +6,7 @@ import { api } from "@/lib/api-client";
 
 import { PaginatedResult, OrderSummary, OrderDetails } from "@/lib/types";
 
-export async function createOrderAction(data: any) {
+export async function createOrderAction(data: unknown) {
   const result = await api.post("/Order/checkout", data);
   return result;
 }

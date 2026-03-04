@@ -5,10 +5,9 @@ import Link from "next/link";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation } from "swiper/modules";
-import { ProductCard, ProductCardProps } from "@/components/main/product-card";
+import { ProductCard } from "@/components/main/product-card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { BASE_URL2 } from "@/lib/api-constants";
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,6 +16,7 @@ import "swiper/css/navigation";
 interface ProductShowcaseSectionProps {
   title: string;
   viewAllLink?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   products: any[];
   className?: string;
 }

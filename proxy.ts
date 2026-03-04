@@ -10,11 +10,13 @@ export async function proxy(request: NextRequest) {
 
   const token = request.cookies.get("session_token")?.value;
   const refreshToken = request.cookies.get("refresh_token")?.value;
-  let user = token ? await verifyToken(token) : null;
+  const user = token ? await verifyToken(token) : null;
 
   if (user && authRoutes.includes(pathname)) {
     if (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (user as any).role === "Admin" ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (user as any).role === "Super Admin"
     ) {
       return NextResponse.redirect(new URL("/admin", request.url));
@@ -72,7 +74,7 @@ export async function proxy(request: NextRequest) {
           return response;
         }
       }
-    } catch (error) {
+    } catch {
       // console.error("Middleware refresh failed:", error);
     }
   }
@@ -92,7 +94,9 @@ export async function proxy(request: NextRequest) {
 
     if (
       isAdminRoute &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (user as any).role !== "Admin" &&
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (user as any).role !== "Super Admin"
     ) {
       return NextResponse.redirect(new URL("/", request.url));

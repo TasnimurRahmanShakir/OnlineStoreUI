@@ -1,0 +1,353 @@
+﻿
+> online-store-ui@0.1.0 lint
+> eslint
+
+
+D:\Freelance\OnlineStoreUI\app\(auth)\login\page.tsx
+  80:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\(auth)\signup\page.tsx
+  74:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\(main)\checkout\page.tsx
+  2:3  warning  'getUserAddressesAction' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\(main)\page.tsx
+  119:9  warning  'popularProducts' is assigned a value but never used   @typescript-eslint/no-unused-vars
+  120:9  warning  'trendingProducts' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\(main)\product\[id]\page.tsx
+    1:10  warning  'notFound' is defined but never used      @typescript-eslint/no-unused-vars
+  117:34  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\actions\admin.ts
+  10:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  18:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\actions\auth.ts
+   8:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  14:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\actions\categories.ts
+  17:10  warning  'getSession' is defined but never used    @typescript-eslint/no-unused-vars
+  85:32  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\actions\order.ts
+  9:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\actions\product.ts
+  60:11  warning  'ProductFilterParams' is defined but never used  @typescript-eslint/no-unused-vars
+  81:22  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  97:54  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\actions\user.ts
+  10:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  29:12  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\admin\admins\admin-sheet.tsx
+   30:17  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-explicit-any
+   40:18  warning  'errors' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-unused-vars
+   96:14  warning  'error' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  162:26  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+D:\Freelance\OnlineStoreUI\app\admin\admins\admin-sheet.tsx:162:26
+  160 |               <Checkbox
+  161 |                 id="isActive"
+> 162 |                 checked={watch("isActive")}
+      |                          ^^^^^ React Hook Form's `useForm()` API returns a `watch()` function which cannot be memoized safely.
+  163 |                 onCheckedChange={(c) => setValue("isActive", c as boolean)}
+  164 |               />
+  165 |               <Label htmlFor="isActive">Active Account</Label>  react-hooks/incompatible-library
+
+D:\Freelance\OnlineStoreUI\app\admin\admins\client.tsx
+  10:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\admin\admins\page.tsx
+  1:10  warning  'DataTable' is defined but never used   @typescript-eslint/no-unused-vars
+  2:10  warning  'columns' is defined but never used     @typescript-eslint/no-unused-vars
+  4:10  warning  'Button' is defined but never used      @typescript-eslint/no-unused-vars
+  5:10  warning  'Plus' is defined but never used        @typescript-eslint/no-unused-vars
+  6:10  warning  'AdminSheet' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\admin\categories\_components\category-actions.tsx
+  50:14  warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  72:24  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  72:40  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+D:\Freelance\OnlineStoreUI\app\admin\categories\page.tsx
+  23:22  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  32:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\admin\orders\[id]\page.tsx
+   4:10  warning  'OrderDetails' is defined but never used             @typescript-eslint/no-unused-vars
+  78:9   warning  'getStatusColor' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\admin\orders\page.tsx
+  27:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  39:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  81:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\app\admin\products\columns.tsx
+  100:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\app\admin\products\new\_components\product-form.tsx
+   82:17  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+   90:45  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  105:43  error    Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  155:14  warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  176:14  warning  'error' is defined but never used                                @typescript-eslint/no-unused-vars
+  419:35  warning  'value' is defined but never used                                @typescript-eslint/no-unused-vars
+  541:39  warning  'value' is defined but never used                                @typescript-eslint/no-unused-vars
+  574:42  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  574:54  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+D:\Freelance\OnlineStoreUI\app\admin\products\page.tsx
+  55:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  64:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\components\admin\admin-header.tsx
+  14:10  warning  'toast' is defined but never used            @typescript-eslint/no-unused-vars
+  17:9   warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\admin\order-actions.tsx
+   82:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  100:14  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\admin\order-product-image.tsx
+   9:10  warning  'Package' is defined but never used                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  27:11  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+
+D:\Freelance\OnlineStoreUI\components\checkout\order-summary.tsx
+  4:10  warning  'Separator' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\main\hero-section.tsx
+  3:18  warning  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\main\layout\bottom-nav.tsx
+  15:3  warning  'cartCount' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\main\layout\header.tsx
+  41:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\components\main\layout\header.tsx:41:5
+  39 |
+  40 |   useEffect(() => {
+> 41 |     setMounted(true);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  42 |   }, []);
+  43 |
+  44 |   const cartCount = mounted                                                                                                       react-hooks/set-state-in-effect
+  58:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\components\main\layout\header.tsx:58:5
+  56 |   // Sync state with URL search param if it changes externally
+  57 |   useEffect(() => {
+> 58 |     setSearchTerm(searchParams.get("search") || "");
+     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  59 |   }, [searchParams]);
+  60 |
+  61 |   useEffect(() => {  react-hooks/set-state-in-effect
+
+D:\Freelance\OnlineStoreUI\components\main\layout\mobile-sidebar.tsx
+  67:5  error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\components\main\layout\mobile-sidebar.tsx:67:5
+  65 |
+  66 |   useEffect(() => {
+> 67 |     setIsMounted(true);
+     |     ^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  68 |   }, []);
+  69 |
+  70 |   const cartCount = isMounted  react-hooks/set-state-in-effect
+
+D:\Freelance\OnlineStoreUI\components\main\product-card.tsx
+   5:22  warning  'ShoppingCart' is defined but never used          @typescript-eslint/no-unused-vars
+  26:51  warning  'index' is defined but never used                 @typescript-eslint/no-unused-vars
+  34:9   warning  'hasDiscount' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\main\product-showcase-section.tsx
+  19:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\components\main\seo-footer-text.tsx
+  12:72  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\Freelance\OnlineStoreUI\components\store\product-grid.tsx
+  31:20  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+D:\Freelance\OnlineStoreUI\components\store\store-filters.tsx
+   32:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\components\store\store-filters.tsx:32:5
+  30 |
+  31 |   useEffect(() => {
+> 32 |     setMinPrice(searchParams.get("minPrice") || "");
+     |     ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  33 |     setMaxPrice(searchParams.get("maxPrice") || "");
+  34 |   }, [searchParams]);
+  35 |  react-hooks/set-state-in-effect
+  109:35  warning  'checked' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  153:33  warning  'checked' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+  229:41  warning  'checked' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\components\ui\data-table.tsx
+  21:10  warning  'Button' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  34:17  warning  Compilation Skipped: Use of incompatible library
+
+This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+
+D:\Freelance\OnlineStoreUI\components\ui\data-table.tsx:34:17
+  32 |   const [sorting, setSorting] = React.useState<SortingState>([]);
+  33 |
+> 34 |   const table = useReactTable({
+     |                 ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+  35 |     data,
+  36 |     columns,
+  37 |     getCoreRowModel: getCoreRowModel(),  react-hooks/incompatible-library
+
+D:\Freelance\OnlineStoreUI\components\ui\navigation-loader.tsx
+   5:10  warning  'Loader2' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+  13:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\components\ui\navigation-loader.tsx:13:5
+  11 |
+  12 |   useEffect(() => {
+> 13 |     setLoading(false);
+     |     ^^^^^^^^^^ Avoid calling setState() directly within an effect
+  14 |   }, [pathname, searchParams]);
+  15 |
+  16 |   // Show loader on navigation start  react-hooks/set-state-in-effect
+  19:11  warning  'handleComplete' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\hooks\use-cart.ts
+   9:39  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+   9:49  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  10:16  error  Unexpected any. Specify a different type             @typescript-eslint/no-explicit-any
+  84:15  error  'newItems' is never reassigned. Use 'const' instead  prefer-const
+
+D:\Freelance\OnlineStoreUI\hooks\use-variant-selector.ts
+  36:46  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\hooks\use-variant-selector.ts:36:46
+  34 |
+  35 |   useEffect(() => {
+> 36 |     if (!selectedColor && colors.length > 0) setSelectedColor(colors[0]);
+     |                                              ^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  37 |   }, [colors, selectedColor]);
+  38 |
+  39 |   useEffect(() => {                                             react-hooks/set-state-in-effect
+  47:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\hooks\use-variant-selector.ts:47:13
+  45 |         if (!selectedSize || !option.sizes.includes(selectedSize)) {
+  46 |           if (option.sizes.length > 0) {
+> 47 |             setSelectedSize(option.sizes[0]);
+     |             ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  48 |           } else {
+  49 |             setSelectedSize(null);
+  50 |           }  react-hooks/set-state-in-effect
+  66:5   error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+D:\Freelance\OnlineStoreUI\hooks\use-variant-selector.ts:66:5
+  64 |     );
+  65 |
+> 66 |     setCurrentVariant(variant || null);
+     |     ^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  67 |   }, [selectedColor, selectedSize, product.variants]);
+  68 |
+  69 |   const isVariantAvailable = (color: string | null, size: string | null) => {                                                   react-hooks/set-state-in-effect
+  69:9   warning  'isVariantAvailable' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          @typescript-eslint/no-unused-vars
+  78:15  warning  'variant' is assigned a value but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\lib\api-client.ts
+    4:10  warning  'cookies' is defined but never used       @typescript-eslint/no-unused-vars
+   10:35  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   17:32  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   17:47  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   17:61  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:12  warning  'error' is defined but never used         @typescript-eslint/no-unused-vars
+  112:19  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:13  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  122:14  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  122:43  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:13  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  125:42  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  128:13  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  131:15  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  131:44  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\lib\auth-edge.ts
+  12:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+  24:12  warning  'error' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\lib\session.ts
+  16:9   warning  'claims' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  90:11  warning  'token' is assigned a value but never used         @typescript-eslint/no-unused-vars
+  90:18  warning  'refreshToken' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\Freelance\OnlineStoreUI\proxy.ts
+  13:7   error    'user' is never reassigned. Use 'const' instead  prefer-const
+  17:16  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  18:16  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  75:14  warning  'error' is defined but never used                @typescript-eslint/no-unused-vars
+  95:16  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+  96:16  error    Unexpected any. Specify a different type         @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\types\react-quill-new.d.ts
+  6:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\Freelance\OnlineStoreUI\types\react-quill.d.ts
+  5:15  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 115 problems (61 errors, 54 warnings)
+  2 errors and 0 warnings potentially fixable with the `--fix` option.
+

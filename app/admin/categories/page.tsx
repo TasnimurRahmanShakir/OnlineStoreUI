@@ -20,6 +20,7 @@ export default async function CategoriesPage(props: {
 
   // Fetch data directly on the server
   let categories: Category[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let paginatedData: any = {
     hasNextPage: false,
     hasPreviousPage: false,
@@ -29,7 +30,8 @@ export default async function CategoriesPage(props: {
   if (q) {
     const result = await api.get(`/Search/categories?q=${q}`);
     if (result.success) {
-      categories = result.data.map((c: any) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      categories = (result.data as any).map((c: any) => ({
         id: c.id,
         name: c.name,
         // Other fields might be missing in search, mock them or make optional

@@ -79,6 +79,7 @@ type ProductFormValues = z.infer<typeof productSchema>;
 
 interface ProductFormProps {
   categories: CategoryOption[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   initialData?: any;
 }
 
@@ -87,6 +88,7 @@ export default function ProductForm({
   initialData,
 }: ProductFormProps) {
   const form = useForm<ProductFormValues>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(productSchema) as any,
     defaultValues: initialData
       ? {
@@ -102,6 +104,7 @@ export default function ProductForm({
           isActive: initialData.isActive ?? true,
           baseImage: undefined, // Files can't be set programmatically easily
           variants:
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             initialData.variants?.map((v: any) => ({
               ...v,
               image: undefined,
@@ -152,7 +155,7 @@ export default function ProductForm({
       } else {
         toast.error(result.error || "Failed to delete product");
       }
-    } catch (error) {
+    } catch {
       toast.error("Failed to delete product");
     }
   }
@@ -173,7 +176,7 @@ export default function ProductForm({
       } else {
         toast.error(result.error || "Failed to delete variant");
       }
-    } catch (error) {
+    } catch {
       toast.error("Error deleting variant");
     } finally {
       setOpenVariantDeleteDialog(false);
@@ -250,7 +253,8 @@ export default function ProductForm({
 
       if (result.success) {
         toast.success(
-          `Product ${result.data?.name || ""} ${initialData ? "updated" : "saved"} successfully!`,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          `Product ${(result.data as any)?.name || ""} ${initialData ? "updated" : "saved"} successfully!`,
         );
         router.push("/admin/products");
       } else {
@@ -416,7 +420,7 @@ export default function ProductForm({
             <FormField
               control={form.control}
               name="baseImage"
-              render={({ field: { value, onChange, ...fieldProps } }) => (
+              render={({ field: { onChange, ...fieldProps } }) => (
                 <FormItem>
                   <FormLabel>Base Image</FormLabel>
                   <FormControl>
@@ -538,7 +542,7 @@ export default function ProductForm({
                 <FormField
                   control={form.control}
                   name={`variants.${index}.image`}
-                  render={({ field: { value, onChange, ...fieldProps } }) => (
+                  render={({ field: { onChange, ...fieldProps } }) => (
                     <FormItem>
                       <FormLabel>
                         Variant Image{" "}
@@ -571,7 +575,7 @@ export default function ProductForm({
 
             {fields.length === 0 && (
               <div className="text-center p-4 text-muted-foreground">
-                No variants added. Click "Add Variant" to start.
+                No variants added. Click &quot;Add Variant&quot; to start.
               </div>
             )}
           </CardContent>

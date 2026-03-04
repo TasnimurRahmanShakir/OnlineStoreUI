@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AdminSheet } from "./admin-sheet";
 import { columns } from "./columns";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function AdminPageClient({ initialData }: { initialData: any[] }) {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
 

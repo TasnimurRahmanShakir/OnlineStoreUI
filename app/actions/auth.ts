@@ -5,13 +5,13 @@ import { createSession, deleteSession } from "@/lib/session";
 import { AuthResponse } from "@/lib/types";
 import { redirect } from "next/navigation";
 
-export async function registerAction(data: any) {
+export async function registerAction(data: unknown) {
   const result = await api.post<AuthResponse>("/Auth/register", data);
 
   return result;
 }
 
-export async function loginAction(data: any) {
+export async function loginAction(data: unknown) {
   const result = await api.post<AuthResponse>("/Auth/login", data);
 
   if (result.success && result.data) {

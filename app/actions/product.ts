@@ -57,16 +57,7 @@ export async function getNewArrivalsAction() {
   return result.success ? result.data || [] : [];
 }
 
-interface ProductFilterParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  categoryId?: string | string[];
-  brand?: string | string[];
-  minPrice?: number;
-  maxPrice?: number;
-  sort?: string;
-}
+
 
 export async function getStoreProductsAction(params: {
   page?: number;
@@ -78,6 +69,7 @@ export async function getStoreProductsAction(params: {
   maxPrice?: number;
   sort?: string;
 }) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const queryParams: any = {
     PageNumber: params.page || 1,
     PageSize: params.limit || 24,
@@ -90,10 +82,12 @@ export async function getStoreProductsAction(params: {
   if (params.categoryId) queryParams.CategoryIds = params.categoryId;
   if (params.brand) queryParams.Brands = params.brand;
 
-  const result = await api.get("/Product/store", { params: queryParams });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result = await api.get<any>("/Product/store", { params: queryParams });
 
   if (result.success && result.data && result.data.items) {
     // Map PascalCase to camelCase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     result.data.items = result.data.items.map((item: any) => ({
       ...item,
       id: item.Id || item.id,

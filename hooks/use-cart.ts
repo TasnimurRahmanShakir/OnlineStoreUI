@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { syncCartAction } from "@/app/actions/cart";
 import { checkStockAction } from "@/app/actions/product";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const debounce = <T extends (...args: any[]) => any>(func: T, wait: number) => {
-  let timeout: any;
+  let timeout: ReturnType<typeof setTimeout>;
   return (...args: Parameters<T>) => {
     console.log("Debounce: Queuing execution", { args });
     clearTimeout(timeout);
@@ -81,7 +82,7 @@ export const useCartStore = create<CartStore>()(
             return false;
           }
 
-          let newItems = [...items];
+          const newItems = [...items];
           if (existingItemIndex > -1) {
             newItems[existingItemIndex].quantity += item.quantity;
           } else {

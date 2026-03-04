@@ -7,7 +7,7 @@ export async function getAllAdmins() {
   return await api.get("/Admin");
 }
 
-export async function createAdmin(data: any) {
+export async function createAdmin(data: unknown) {
   const result = await api.post("/Admin", data);
   if (result.success) {
     revalidatePath("/admin/admins");
@@ -15,7 +15,7 @@ export async function createAdmin(data: any) {
   return result;
 }
 
-export async function updateAdmin(id: string, data: any) {
+export async function updateAdmin(id: string, data: unknown) {
   const result = await api.put(`/Admin/${id}`, data);
   if (result.success) {
     revalidatePath("/admin/admins");

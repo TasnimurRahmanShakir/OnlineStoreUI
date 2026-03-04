@@ -52,6 +52,7 @@ export default async function ProductsPage(props: {
   const q = searchParams.q;
 
   let products: Product[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let paginatedResult: any = {
     hasNextPage: false,
     hasPreviousPage: false,
@@ -61,7 +62,8 @@ export default async function ProductsPage(props: {
   if (q) {
     const result = await api.get(`/Search/products?q=${q}`);
     if (result.success) {
-      products = result.data.map((p: any) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      products = (result.data as any).map((p: any) => ({
         id: p.id,
         name: p.name,
         brand: p.brand,
