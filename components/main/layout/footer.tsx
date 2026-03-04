@@ -22,7 +22,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand & Newsletter */}
           <div className="space-y-6">
-            <Image src="/logo1.png" alt="Logo" width={250} height={150} />
+            <Image src="/logo1.png" alt="Logo" width={250} height={150} style={{ width: "auto", height: "auto" }} />
             <p className="text-gray-400 text-sm leading-relaxed">
               Premium quality products for your lifestyle. We curate the best
               items to enhance your everyday experience.

@@ -1,8 +1,11 @@
-"use client";
-
 import Script from "next/script";
 
 const FacebookPixel = () => {
+  const PIXEL_ID = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+
+    console.log(PIXEL_ID);
+    if(!PIXEL_ID) return null;
+
   return (
     <>
       <Script
@@ -18,7 +21,7 @@ const FacebookPixel = () => {
             t.src=v;s=b.getElementsByTagName(e)[0];
             s.parentNode.insertBefore(t,s)}(window, document,'script',
             'https://connect.facebook.net/en_US/fbevents.js');
-            fbq('init', '${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}');
+            fbq('init', '${PIXEL_ID}');
             fbq('track', 'PageView');
           `,
         }}
@@ -29,8 +32,8 @@ const FacebookPixel = () => {
           height="1"
           width="1"
           style={{ display: "none" }}
-          src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}&ev=PageView&noscript=1`}
-          alt=""
+          src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+          alt="fb-pixel"
         />
       </noscript>
     </>
