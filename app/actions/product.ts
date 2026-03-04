@@ -53,8 +53,24 @@ export async function getProductByIdAction(id: string) {
 }
 
 export async function getNewArrivalsAction() {
-  const result = await api.get<NewArrivals[]>("/Product/new-arrivals");
-  return result.success ? result.data || [] : [];
+  const result = await api.get<any[]>("/Product/new-arrivals");
+  if (result.success && result.data) {
+    return result.data.map((item: any) => ({
+      ...item,
+      id: item.Id || item.id,
+      name: item.Name || item.name,
+      brand: item.Brand || item.brand,
+      baseImage: item.BaseImage || item.baseImage,
+      priceSummary: item.PriceSummary || item.priceSummary,
+      salePrice: item.SalePrice || item.salePrice,
+      originalPrice: item.OriginalPrice || item.originalPrice,
+      rating: item.Rating || item.rating,
+      reviewCount: item.ReviewCount || item.reviewCount,
+      soldCount: item.SoldCount || item.soldCount,
+      badges: item.Badges || item.badges,
+    })) as NewArrivals[];
+  }
+  return [];
 }
 
 

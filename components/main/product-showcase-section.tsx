@@ -23,7 +23,7 @@ interface ProductShowcaseSectionProps {
 
 export function ProductShowcaseSection({
   title,
-  viewAllLink = "/products",
+  viewAllLink = "/store",
   products,
   className,
 }: ProductShowcaseSectionProps) {

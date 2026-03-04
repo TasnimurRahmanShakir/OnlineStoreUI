@@ -36,6 +36,7 @@ export const apiCall = async <T = unknown>(
 
   const config: RequestInit = {
     method,
+    cache: "no-store",
     headers: {
       ...headers,
     },

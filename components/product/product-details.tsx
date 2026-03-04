@@ -195,7 +195,7 @@ export function ProductDetails({
           <ProductShowcaseSection
             title="You Might Also Like"
             products={similarProducts}
-            viewAllLink="/products"
+            viewAllLink="/store"
           />
         </div>
       )}

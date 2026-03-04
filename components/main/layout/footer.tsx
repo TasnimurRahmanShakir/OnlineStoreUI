@@ -47,7 +47,7 @@ export function Footer() {
             <ul className="space-y-4 text-sm text-gray-400">
               <li>
                 <Link
-                  href="/products"
+                  href="/store"
                   className="hover:text-white transition-colors"
                 >
                   All Products
@@ -86,7 +86,7 @@ export function Footer() {
             <ul className="space-y-4 text-sm text-gray-400">
               <li>
                 <Link
-                  href="/faq"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   FAQ
@@ -94,7 +94,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/shipping"
+                  href="#"
                   className="hover:text-white transition-colors"
                 >
                   Shipping & Returns
