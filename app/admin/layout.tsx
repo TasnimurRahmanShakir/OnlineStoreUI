@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Sidebar } from "@/components/layout/sidebar";
 import { AdminHeader } from "@/components/admin/admin-header";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "E-Commerce Admin",
   description: "Admin Dashboard",

@@ -12,6 +12,8 @@ export const metadata = {
   description: "Browse our wide range of products.",
 };
 
+export const dynamic = "force-dynamic";
+
 interface StorePageProps {
   searchParams: Promise<{
     page?: string;
