@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { getAllOrdersAction } from "@/app/actions/order";
 import { OrderActions } from "@/components/admin/order-actions";
 import { AdminSearch } from "@/components/admin/admin-search";
+import { getSession } from "@/lib/session";
 import { api } from "@/lib/api-client";
 
 export default async function OrdersPage({
@@ -23,6 +24,9 @@ export default async function OrdersPage({
   const { page, q } = await searchParams;
   const currentPage = Number(page) || 1;
   const limit = 10;
+
+  const session = await getSession();
+  const isSuperAdmin = session?.role === "Super Admin";
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let data: any = {
@@ -102,6 +106,7 @@ export default async function OrdersPage({
                       currentStatus={order.status}
                       canEdit={order.canEdit}
                       assignedAdminName={order.assignedAdminName}
+                      isSuperAdmin={isSuperAdmin}
                     />
                   </TableCell>
                 </TableRow>

@@ -49,6 +49,7 @@ interface OrderActionsProps {
   currentStatus: string;
   canEdit?: boolean;
   assignedAdminName?: string;
+  isSuperAdmin?: boolean;
 }
 
 export function OrderActions({
@@ -56,6 +57,7 @@ export function OrderActions({
   currentStatus,
   canEdit = true, // Default to true if not provided (backward compatibility)
   assignedAdminName,
+  isSuperAdmin = false,
 }: OrderActionsProps) {
   const [loading, setLoading] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -79,7 +81,7 @@ export function OrderActions({
       } else {
         toast.error(`Failed to update status: ${result.error}`);
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred while updating status");
     } finally {
       setLoading(false);
@@ -97,7 +99,7 @@ export function OrderActions({
       } else {
         toast.error(`Failed to delete order: ${result.error}`);
       }
-    } catch (error) {
+    } catch {
       toast.error("An error occurred while deleting order");
     } finally {
       setLoading(false);
@@ -111,7 +113,7 @@ export function OrderActions({
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
             <span className="sr-only">Open menu</span>
-            {canEdit ? (
+            {canEdit || isSuperAdmin ? (
               <MoreHorizontal className="h-4 w-4" />
             ) : (
               <Lock className="h-4 w-4 text-muted-foreground" />
@@ -121,12 +123,12 @@ export function OrderActions({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>
             Actions
-            {!canEdit && assignedAdminName && (
+            {!canEdit && !isSuperAdmin && assignedAdminName && (
               <span className="block text-xs font-normal text-muted-foreground mt-1">
                 Locked by {assignedAdminName}
               </span>
             )}
-            {!canEdit && !assignedAdminName && (
+            {!canEdit && !isSuperAdmin && !assignedAdminName && (
               <span className="block text-xs font-normal text-muted-foreground mt-1">
                 Locked (Cancelled or Restricted)
               </span>
@@ -171,7 +173,7 @@ export function OrderActions({
           <DropdownMenuItem
             className="text-red-600 focus:text-red-600"
             onClick={() => setDeleteOpen(true)}
-            disabled={!canEdit} // Assuming if strictly locked, also can't delete here. Or backend handles it.
+            disabled={!canEdit && !isSuperAdmin} // Assuming if strictly locked, also can't delete here. Or backend handles it.
           >
             <Trash2 className="mr-2 h-4 w-4" />
             Delete Order

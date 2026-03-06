@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getOrderByIdAction } from "@/app/actions/order";
+import { getSession } from "@/lib/session";
 import { OrderProductImage } from "@/components/admin/order-product-image";
-import { OrderDetails } from "@/lib/types";
 import {
   Card,
   CardContent,
@@ -32,6 +32,8 @@ export default async function OrderDetailsPage({
 }) {
   const { id } = await params;
   const response = await getOrderByIdAction(id);
+  const session = await getSession();
+  const isSuperAdmin = session?.role === "Super Admin";
 
   if (!response.success || !response.data) {
     return (
@@ -76,22 +78,6 @@ export default async function OrderDetailsPage({
     });
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "pending":
-        return "secondary";
-      case "processing":
-        return "default";
-      case "shipped":
-        return "info";
-      case "delivered":
-        return "success";
-      case "cancelled":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
 
   return (
     <div className="space-y-8 animate-in fade-in-50 duration-500">
@@ -142,6 +128,7 @@ export default async function OrderDetailsPage({
             currentStatus={order.orderStatus}
             canEdit={order.canEdit}
             assignedAdminName={order.assignedAdminName}
+            isSuperAdmin={isSuperAdmin}
           />
         </div>
       </div>
