@@ -8,7 +8,6 @@ import { ProductImageGallery } from "@/components/product/product-image-gallery"
 import { ProductInfo } from "@/components/product/product-info";
 import { ProductShowcaseSection } from "@/components/main/product-showcase-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 
 interface ProductDetailsProps {
   product: Product;
@@ -94,12 +93,7 @@ export function ProductDetails({
               >
                 Specifications
               </TabsTrigger>
-              <TabsTrigger
-                value="reviews"
-                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-4 py-3 text-sm md:text-base whitespace-nowrap"
-              >
-                Reviews ({product.reviewCount || 0})
-              </TabsTrigger>
+
             </TabsList>
           </div>
 
@@ -143,50 +137,7 @@ export function ProductDetails({
             </div>
           </TabsContent>
 
-          <TabsContent value="reviews" className="pt-6 md:pt-8">
-            <div className="space-y-6">
-              {product.reviews && product.reviews.length > 0 ? (
-                product.reviews.map((review, i) => (
-                  <div key={i} className="border-b pb-6 last:border-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2">
-                      <div className="flex flex-col">
-                        <span className="font-semibold">
-                          {review.Name || review.user}
-                        </span>
-                        {review.datePosted && (
-                          <span className="text-xs text-muted-foreground">
-                            {review.datePosted}
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex">
-                        {[...Array(5)].map((_, starIndex) => (
-                          <span
-                            key={starIndex}
-                            className={cn(
-                              "text-lg",
-                              starIndex < review.rating
-                                ? "text-yellow-400"
-                                : "text-gray-200",
-                            )}
-                          >
-                            ★
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <p className="text-sm md:text-base text-gray-600">
-                      {review.comment}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-12 text-muted-foreground bg-gray-50 rounded-lg">
-                  No reviews yet. Be the first to review this product!
-                </div>
-              )}
-            </div>
-          </TabsContent>
+
         </Tabs>
       </div>
 

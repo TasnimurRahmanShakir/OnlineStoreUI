@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Star, Heart, ShoppingCart, Minus, Plus } from "lucide-react";
+import { Heart, ShoppingCart, Minus, Plus } from "lucide-react";
 import { useCartStore } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -79,21 +79,7 @@ export function ProductInfo({
           {product.name}
         </h1>
 
-        <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-1">
-            <Star className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" />
-            <span className="font-semibold text-sm sm:text-base">
-              {product.averageRating || 0}
-            </span>
-            <span className="text-muted-foreground text-xs sm:text-sm">
-              ({product.reviewCount || 0} reviews)
-            </span>
-          </div>
-          <Separator orientation="vertical" className="h-4 sm:h-5" />
-          <span className="text-muted-foreground text-xs sm:text-sm">
-            {product.soldCount || 0} sold
-          </span>
-        </div>
+        {/* Reviews and Sold Counts Removed */}
       </div>
 
       {/* Pricing */}

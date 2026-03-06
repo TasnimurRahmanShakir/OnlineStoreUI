@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Eye, ShoppingCart, Star } from "lucide-react";
+import { Heart, Eye, ShoppingCart } from "lucide-react";
 import { cn, constructImageUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -24,9 +24,6 @@ export interface ProductCardProps {
 }
 
 export function ProductCard({ product, className, index }: ProductCardProps) {
-  const rating = product.rating || 0;
-  const reviewCount = product.reviewCount || 0;
-  const soldCount = product.soldCount || 0;
   const badges = product.badges || [];
 
   const priceDisplay = product.priceSummary || "৳100.00";
@@ -118,22 +115,7 @@ export function ProductCard({ product, className, index }: ProductCardProps) {
           {product.name}
         </h3>
 
-        {/*Rating & Sold */}
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-            <span className="font-medium text-gray-900">{rating}</span>
-            <span>({reviewCount})</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <span>
-              {soldCount >= 1000
-                ? `${(soldCount / 1000).toFixed(1)}k`
-                : soldCount}{" "}
-              sold
-            </span>
-          </div>
-        </div>
+        {/*Rating & Sold section removed */}
 
         {/* Price */}
         <div className="pt-2 flex items-center gap-2">

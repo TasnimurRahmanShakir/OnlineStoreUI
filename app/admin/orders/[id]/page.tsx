@@ -21,6 +21,7 @@ import {
   MapPin,
   Package,
   User,
+  Phone,
 } from "lucide-react";
 import { OrderActions } from "@/components/admin/order-actions";
 
@@ -260,6 +261,17 @@ export default async function OrderDetailsPage({
                       {order.customerEmail}
                     </a>
                   </div>
+                  {order.customerPhone && (
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                      <Phone className="h-3 w-3" />
+                      <a
+                        href={`tel:${order.customerPhone}`}
+                        className="hover:text-primary transition-colors"
+                      >
+                        {order.customerPhone}
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -290,7 +302,7 @@ export default async function OrderDetailsPage({
                   <span>Payment Information</span>
                 </div>
                 <div className="text-sm text-muted-foreground ml-6">
-                  Paid via Credit Card
+                  {order.paymentMethod === "COD" ? "Cash on Delivery (COD)" : `Paid via ${order.paymentMethod}`}
                   <br />
                   <span className="text-xs">
                     Transaction ID: {order.orderNumber}

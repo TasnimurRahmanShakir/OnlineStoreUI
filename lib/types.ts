@@ -216,10 +216,12 @@ export type OrderDetails = {
   // Customer Info
   customerName: string;
   customerEmail: string;
+  customerPhone: string;
 
   // Shipping Info
   shippingAddress: string;
   shippingLabel: string;
+  paymentMethod: string;
 
   assignedAdminId?: string;
   assignedAdminName?: string;
